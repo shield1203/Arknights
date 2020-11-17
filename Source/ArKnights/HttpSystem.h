@@ -10,6 +10,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FUserIdResponsReceivedDelegate, boo
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FLoginResponsReceivedDelegate, bool, bIsSuccess, FString, respons);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FItemResponsReceivedDelegate, bool, bIsSuccess, FString, respons);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOperatorResponsReceivedDelegate, bool, bIsSuccess, FString, respons);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FTeamResponsReceivedDelegate, bool, bIsSuccess, FString, respons);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FShopGoodsResponsReceivedDelegate, bool, bIsSuccess, FString, respons);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FPurchaseResponsReceivedDelegate, bool, bIsSuccess, FString, respons);
 
@@ -40,6 +41,9 @@ public:
 
 	UPROPERTY(BlueprintAssignable, VisibleAnywhere, BlueprintCallable, Category = "HttpSystem")
 	FOperatorResponsReceivedDelegate OnOperatorResponsReceiveCallback;
+
+	UPROPERTY(BlueprintAssignable, VisibleAnywhere, BlueprintCallable, Category = "HttpSystem")
+	FTeamResponsReceivedDelegate OnTeamResponsReceiveCallback;
 
 	UPROPERTY(BlueprintAssignable, VisibleAnywhere, BlueprintCallable, Category = "HttpSystem")
 	FShopGoodsResponsReceivedDelegate OnShopGoodsResponsReceiveCallback;
@@ -82,6 +86,16 @@ public:
 	void RequestOperators(FString id);
 
 	void OnOperatorResponsReceived(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful);
+
+	// 팀 목록
+	UFUNCTION(BlueprintCallable, Category = "HttpSystem")
+	void RequestTeams(FString id);
+
+	void OnTeamResponsReceived(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful);
+
+	// 팀 수정 요청
+	UFUNCTION(BlueprintCallable, Category = "HttpSystem")
+	void RequestTeamChange(FString id, FString teamJson);
 
 	// 상점 아이템 목록
 	UFUNCTION(BlueprintCallable, Category = "HttpSystem")

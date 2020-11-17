@@ -173,6 +173,46 @@ void UHttpSystem::OnOperatorResponsReceived(FHttpRequestPtr Request, FHttpRespon
 	OnOperatorResponsReceiveCallback.Broadcast(bWasSuccessful, strResult);
 }
 
+void UHttpSystem::RequestTeams(FString id)
+{
+	FString strScheme = TEXT("/Teams?id=") + id;
+	FString strURL = g_serverIP + strScheme;
+
+	TSharedPtr<IHttpRequest> HttpRequest = m_httpModule->CreateRequest();
+	HttpRequest->SetVerb("GET");
+	HttpRequest->SetURL(strURL);
+
+	HttpRequest->OnProcessRequestComplete().BindUObject(this, &UHttpSystem::OnTeamResponsReceived);
+	HttpRequest->ProcessRequest();
+}
+
+void UHttpSystem::OnTeamResponsReceived(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful)
+{
+	FString strResult = m_serverConnectCheck;
+
+	if (bWasSuccessful)
+	{
+		strResult = Response->GetContentAsString();
+	}
+
+	OnTeamResponsReceiveCallback.Broadcast(bWasSuccessful, strResult);
+}
+
+void UHttpSystem::RequestTeamChange(FString id, FString teamJson)
+{
+	FString strScheme = TEXT("/TeamsChange?id=") + id;
+	FString strURL = g_serverIP + strScheme;
+
+	TSharedPtr<IHttpRequest> HttpRequest = m_httpModule->CreateRequest();
+	HttpRequest->SetVerb("POST");
+	HttpRequest->SetHeader(TEXT("User-Agent"), "X-UnrealEngine-Agent");
+	HttpRequest->SetHeader("Content-Type", TEXT("application/json"));
+	HttpRequest->SetURL(strURL);
+	HttpRequest->SetContentAsString(teamJson);
+
+	HttpRequest->ProcessRequest();
+}
+
 void UHttpSystem::RequestShopGoods(FString id, FString menu)
 {
 	FString strScheme = TEXT("/Shop?id=") + id + TEXT("&menu=") + menu;

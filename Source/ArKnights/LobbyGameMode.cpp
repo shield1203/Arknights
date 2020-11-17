@@ -5,6 +5,7 @@
 #include "ArKnightsGameInstance.h"
 #include "ItemManager.h"
 #include "UserDataManager.h"
+#include "OperatorManager.h"
 
 ALobbyGameMode::ALobbyGameMode()
 {
@@ -38,4 +39,6 @@ void ALobbyGameMode::RequestLobbyData()
 
 	pGameInstance->GetItemManager()->RequestItems();
 	pGameInstance->GetUserDataManager()->RequestUserData();
+	pGameInstance->GetOperatorManager()->RequestOperators();
+	pGameInstance->GetOperatorManager()->RequestTeams();
 }

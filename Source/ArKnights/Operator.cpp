@@ -45,6 +45,11 @@ void UOperator::LoadOperatorData(EOperatorCode Operatorcode)
 	m_thumbnail = Cast<UTexture2D>(StaticLoadObject(UTexture2D::StaticClass(), nullptr, *(pOperatorData->Thumbnail)));
 }
 
+int32 UOperator::GetCode() const
+{
+	return static_cast<int32>(m_code);
+}
+
 FString UOperator::GetName() const
 {
 	return m_data.Name;

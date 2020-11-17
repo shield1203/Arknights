@@ -78,22 +78,22 @@ public:
 	EFaction Faction;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	uint8 MaxHP;
+	int32 MaxHP;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	uint8 ATK;
+	int32 ATK;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	uint8 DEF;
+	int32 DEF;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	uint8 RES;
+	int32 RES;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	uint8 RDP;
+	int32 RDP;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	uint8 DP;
+	int32 DP;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	uint8 Block;
@@ -125,6 +125,9 @@ public:
 	void Initialize(EOperatorCode code, uint8 level);
 
 	void LoadOperatorData(EOperatorCode Operatorcode);
+
+	UFUNCTION(BlueprintCallable)
+	int32 GetCode() const;
 
 	UFUNCTION(BlueprintCallable)
 	FString GetName() const;
