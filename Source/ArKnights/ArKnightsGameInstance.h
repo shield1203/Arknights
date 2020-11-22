@@ -8,6 +8,8 @@ class UItemManager;
 class UOperatorManager;
 class UShopManager;
 class UUserDataManager;
+class UWidgetManager;
+class UOperationManager;
 
 UENUM(BlueprintType)
 enum class EGameDataTable : uint8
@@ -15,6 +17,7 @@ enum class EGameDataTable : uint8
 	ItemData UMETA(DisplayName = "DT_ItemData"),
 	OperatorData UMETA(DisplayName = "DT_OperatorData"),
 	ExpData UMETA(DisplayName = "DT_ExpData"),
+	OperationData UMETA(DisplayName = "DT_OperationData"),
 };
 
 UCLASS(BlueprintType)
@@ -38,6 +41,12 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Manager")
 	UUserDataManager* m_userDataManager;
 
+	UPROPERTY(EditAnywhere, Category = "Manager")
+	UWidgetManager* m_widgetManager;
+
+	UPROPERTY(EditAnywhere, Category = "Manager")
+	UOperationManager* m_operationManager;
+
 public:
 	UArKnightsGameInstance();
 
@@ -58,4 +67,10 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	UUserDataManager* GetUserDataManager() const;
+
+	UFUNCTION(BlueprintCallable)
+	UWidgetManager* GetWidgetManager() const;
+
+	UFUNCTION(BlueprintCallable)
+	UOperationManager* GetOperationManager() const;
 };

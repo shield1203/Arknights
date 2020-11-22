@@ -262,3 +262,28 @@ void UHttpSystem::OnPurchaseResponsReceived(FHttpRequestPtr Request, FHttpRespon
 
 	OnPurchaseResponsReceiveCallback.Broadcast(bWasSuccessful, strResult);
 }
+
+void UHttpSystem::RequestOperation(FString id)
+{
+	FString strScheme = TEXT("/Operations?id=") + id;
+	FString strURL = g_serverIP + strScheme;
+
+	TSharedPtr<IHttpRequest> HttpRequest = m_httpModule->CreateRequest();
+	HttpRequest->SetVerb("GET");
+	HttpRequest->SetURL(strURL);
+
+	HttpRequest->OnProcessRequestComplete().BindUObject(this, &UHttpSystem::OnOperationResponsReceived);
+	HttpRequest->ProcessRequest();
+}
+
+void UHttpSystem::OnOperationResponsReceived(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful)
+{
+	FString strResult = m_serverConnectCheck;
+
+	if (bWasSuccessful)
+	{
+		strResult = Response->GetContentAsString();
+	}
+
+	OnOperationResponsReceiveCallback.Broadcast(bWasSuccessful, strResult);
+}

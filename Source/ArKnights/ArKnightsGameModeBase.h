@@ -10,18 +10,18 @@ class ARKNIGHTS_API AArKnightsGameModeBase : public AGameModeBase
 	GENERATED_BODY()
 	
 protected:
-	UPROPERTY(EditAnyWhere, BlueprintReadWrite, Category = "Game_UMG", meta = (AllowPrivateAccess = "true"))
-	TArray<class UUserWidget*> m_widgets;
+	UPROPERTY(EditAnyWhere, BlueprintReadWrite, Category = "GameModeBase", meta = (AllowPrivateAccess = "true"))
+	class UUserWidget* m_mainWidget;
 
-	UPROPERTY(EditAnyWhere, BlueprintReadWrite, Category = "Game_SoundSystem", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnyWhere, BlueprintReadWrite, Category = "GameModeBase", meta = (AllowPrivateAccess = "true"))
 	class USoundSystem* m_soundSystem;
 
 public:
 	AArKnightsGameModeBase();
 
-	UFUNCTION(BlueprintCallable, Category = "Game_UMG")
-	void AddWidget(TSubclassOf<UUserWidget> NewWidgetClass);
+	UFUNCTION(BlueprintCallable)
+	void SetMainWidget();
 
-	UFUNCTION(BlueprintCallable, Category = "Game_UMG")
-	void RemoveLastWidget();
+	UFUNCTION(BlueprintCallable)
+	void AddToViewSubWidgets();
 };

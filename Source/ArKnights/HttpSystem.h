@@ -13,6 +13,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOperatorResponsReceivedDelegate, b
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FTeamResponsReceivedDelegate, bool, bIsSuccess, FString, respons);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FShopGoodsResponsReceivedDelegate, bool, bIsSuccess, FString, respons);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FPurchaseResponsReceivedDelegate, bool, bIsSuccess, FString, respons);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOperationResponsReceivedDelegate, bool, bIsSuccess, FString, respons);
 
 UCLASS(BlueprintType)
 class ARKNIGHTS_API UHttpSystem : public UObject
@@ -50,6 +51,9 @@ public:
 
 	UPROPERTY(BlueprintAssignable, VisibleAnywhere, BlueprintCallable, Category = "HttpSystem")
 	FPurchaseResponsReceivedDelegate OnPurchaseResponsReceiveCallback;
+
+	UPROPERTY(BlueprintAssignable, VisibleAnywhere, BlueprintCallable, Category = "HttpSystem")
+	FOperationResponsReceivedDelegate OnOperationResponsReceiveCallback;
 
 public:
 	UHttpSystem();
@@ -108,4 +112,10 @@ public:
 	void RequestPurchase(FString id, FString menu, FString number);
 
 	void OnPurchaseResponsReceived(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful);
+
+	// 클리어 작전 조회
+	UFUNCTION(BlueprintCallable, Category = "HttpSystem")
+	void RequestOperation(FString id);
+
+	void OnOperationResponsReceived(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful);
 };

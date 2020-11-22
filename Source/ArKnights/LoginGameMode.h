@@ -9,8 +9,8 @@ class ARKNIGHTS_API ALoginGameMode : public AArKnightsGameModeBase
 {
 	GENERATED_BODY()
 	
-private:
-	
+protected:
+	virtual void StartPlay();
 
 public:
 	ALoginGameMode();

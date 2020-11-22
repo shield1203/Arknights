@@ -8,6 +8,13 @@ ATitleGameMode::ATitleGameMode()
 	static ConstructorHelpers::FClassFinder<UUserWidget> TitleWidget(TEXT("/Game/Widget/Title/WB_Title"));
 	if (TitleWidget.Succeeded())
 	{
-		AddWidget(TitleWidget.Class);
+		m_mainWidget = CreateWidget(GetWorld(), TitleWidget.Class);
 	}
+}
+
+void ATitleGameMode::StartPlay()
+{
+	Super::StartPlay();
+
+	SetMainWidget();
 }

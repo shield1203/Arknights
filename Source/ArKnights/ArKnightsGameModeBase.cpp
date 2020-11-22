@@ -1,29 +1,40 @@
 #include "ArKnightsGameModeBase.h"
+#include "ArknightsGameInstance.h"
 #include "Blueprint/UserWidget.h"
 #include "SoundSystem.h"
+#include "WidgetManager.h"
 
 AArKnightsGameModeBase::AArKnightsGameModeBase()
 {
 	m_soundSystem = CreateDefaultSubobject<USoundSystem>(TEXT("GameMode_SoundSystem"));
 }
 
-void AArKnightsGameModeBase::AddWidget(TSubclassOf<UUserWidget> NewWidgetClass)
+void AArKnightsGameModeBase::SetMainWidget()
 {
-	if (nullptr != NewWidgetClass)
+	UWorld* pWorld = GetWorld();
+
+	UArKnightsGameInstance* pGameInstance = pWorld ? pWorld->GetGameInstance<UArKnightsGameInstance>() : nullptr;
+
+	if (!pGameInstance)
 	{
-		UUserWidget* pAddWidget = CreateWidget(GetWorld(), NewWidgetClass);
-		if (pAddWidget)
-		{
-			pAddWidget->AddToViewport();
-			m_widgets.Add(pAddWidget);
-		}
+		UE_LOG(LogTemp, Warning, TEXT("GameInstance nullptr"));
+		return;
 	}
+
+	pGameInstance->GetWidgetManager()->SetMainWidget(m_mainWidget);
 }
 
-void AArKnightsGameModeBase::RemoveLastWidget()
+void AArKnightsGameModeBase::AddToViewSubWidgets()
 {
-	if (m_widgets.Num() <= 0) return;
+	UWorld* pWorld = GetWorld();
 
-	m_widgets[m_widgets.Num() - 1]->RemoveFromParent();
-	m_widgets.RemoveAt(m_widgets.Num() - 1);
+	UArKnightsGameInstance* pGameInstance = pWorld ? pWorld->GetGameInstance<UArKnightsGameInstance>() : nullptr;
+
+	if (!pGameInstance)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("GameInstance nullptr"));
+		return;
+	}
+
+	pGameInstance->GetWidgetManager()->AddToViewportSubWidgets();
 }

@@ -7,6 +7,8 @@
 #include "OperatorManager.h"
 #include "ShopManager.h"
 #include "UserDataManager.h"
+#include "WidgetManager.h"
+#include "OperationManager.h"
 //#include "UObject/ConstructorHelpers.h"
 
 UArKnightsGameInstance::UArKnightsGameInstance()
@@ -15,6 +17,7 @@ UArKnightsGameInstance::UArKnightsGameInstance()
 	DataTablePath.Add(data_table_keys::item);
 	DataTablePath.Add(data_table_keys::opertator);
 	DataTablePath.Add(data_table_keys::exp);
+	DataTablePath.Add(data_table_keys::operation);
 
 	for (FString path : DataTablePath)
 	{
@@ -30,6 +33,8 @@ UArKnightsGameInstance::UArKnightsGameInstance()
 	m_operatorManager = CreateDefaultSubobject<UOperatorManager>(TEXT("GameInstance_OperatorManager"));
 	m_shopManager = CreateDefaultSubobject<UShopManager>(TEXT("GameInstance_ShopManager"));
 	m_userDataManager = CreateDefaultSubobject<UUserDataManager>(TEXT("GameInstance_UserDataManager"));
+	m_widgetManager = CreateDefaultSubobject<UWidgetManager>(TEXT("GameInstance_WidgetManager"));
+	m_operationManager = CreateDefaultSubobject<UOperationManager>(TEXT("GameInstance_OperationManager"));
 }
 
 FString UArKnightsGameInstance::GetMyId() const
@@ -62,4 +67,14 @@ UShopManager* UArKnightsGameInstance::GetShopManager() const
 UUserDataManager* UArKnightsGameInstance::GetUserDataManager() const
 {
 	return m_userDataManager;
+}
+
+UWidgetManager* UArKnightsGameInstance::GetWidgetManager() const
+{
+	return m_widgetManager;
+}
+
+UOperationManager* UArKnightsGameInstance::GetOperationManager() const
+{
+	return m_operationManager;
 }

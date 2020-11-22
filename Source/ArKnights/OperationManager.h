@@ -2,34 +2,38 @@
 
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
+#include "Engine/DataTable.h"
 #include "OperationManager.generated.h"
 
 USTRUCT(BlueprintType)
-struct FOperationData
+struct FOperationData : public FTableRowBase
 {
 	GENERATED_BODY()
 
 public:
 	UPROPERTY()
-	uint8 episode;
+	int32 Episode;
 
 	UPROPERTY()
-	uint8 chapter;
+	int32 Chapter;
 
 	UPROPERTY()
-	int32 sanity; // 소비이성
+	FString Name;
 
 	UPROPERTY()
-	int32 level; //  추천 평균 레벨
+	int32 Sanity; // 소비이성
 
 	UPROPERTY()
-	int32 enemies; // 총 등장 적유닛수
+	int32 Level; //  추천 평균 레벨
 
 	UPROPERTY()
-	int32 unitLimit; // 필드에 배치가능한 유닛수
+	int32 Enemies; // 총 등장 적유닛수
 
 	UPROPERTY()
-	int32 lifePoint; // 라이프카운터
+	int32 UnitLimit; // 필드에 배치가능한 유닛수
+
+	UPROPERTY()
+	int32 LifePoint; // 라이프카운터
 
 	UPROPERTY()
 	int32 EXP; // 클리어 경험치
@@ -38,7 +42,7 @@ public:
 	int32 LMD; // 클리어 보상 LMD
 
 	UPROPERTY()
-	FString explanation;
+	FString Explanation;
 };
 
 USTRUCT(BlueprintType)
@@ -48,13 +52,13 @@ struct FClearOperation
 
 public:
 	UPROPERTY()
-	uint8 episode;
+	int32 episode;
 
 	UPROPERTY()
-	uint8 chapter;
+	int32 chapter;
 
 	UPROPERTY()
-	uint8 clear_rank;
+	int32 clear_rank;
 };
 
 UCLASS(Blueprintable, ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
@@ -64,10 +68,13 @@ class ARKNIGHTS_API UOperationManager : public UObject
 	
 private:
 	UPROPERTY()
-	uint8 m_curEpisode;
+	class UHttpSystem* m_httpSystem;
 
 	UPROPERTY()
-	uint8 m_curChapter;
+	int32 m_curEpisode;
+
+	UPROPERTY()
+	int32 m_curChapter;
 
 	UPROPERTY()
 	TArray<FClearOperation>m_clearOperation;
@@ -76,17 +83,50 @@ public:
 	UOperationManager();
 
 	UFUNCTION(BlueprintCallable)
-	void SetEpisode(uint8 selectedEpisode);
+	void RequestClearOperations();
 
 	UFUNCTION(BlueprintCallable)
-	void SetChapter(uint8 selectedChapter);
+	void OnClearOperationsResponsRecived(bool IsSuccess, FString respons);
 
 	UFUNCTION(BlueprintCallable)
-	uint8 GetCurEpisode() const;
+	void SetClearOperation(FString clearOperations);
 
 	UFUNCTION(BlueprintCallable)
-	uint8 GetCurChapter() const;
+	void SetEpisode(int32 selectedEpisode);
 
 	UFUNCTION(BlueprintCallable)
-	uint8 GetOperationClearRank(uint8 episode, uint8 chapter) const;
+	void SetChapter(int32 selectedChapter);
+
+	UFUNCTION(BlueprintCallable)
+	int32 GetMaxEpisode();
+
+	UFUNCTION(BlueprintCallable)
+	int32 GetMaxChapter(int32 episode);
+
+	UFUNCTION(BlueprintCallable)
+	TArray<int32> GetPlayableEpisode();
+
+	UFUNCTION(BlueprintCallable)
+	TArray<int32> GetPlayableChapter(int32 episode);
+
+	UFUNCTION(BlueprintCallable)
+	int32 GetCurEpisode() const;
+
+	UFUNCTION(BlueprintCallable)
+	int32 GetCurChapter() const;
+
+	UFUNCTION(BlueprintCallable)
+	int32 GetOperationClearRank(int32 episode, int32 chapter) const;
+
+	UFUNCTION(BlueprintCallable)
+	FString GetOperationName(int32 episode, int32 chapter) const;
+
+	UFUNCTION(BlueprintCallable)
+	int32 GetOperationLevel(int32 episode, int32 chapter) const;
+
+	UFUNCTION(BlueprintCallable)
+	int32 GetOperationSanity(int32 episode, int32 chapter) const;
+
+	UFUNCTION(BlueprintCallable)
+	FString GetOperationExplanation(int32 episode, int32 chapter) const;
 };

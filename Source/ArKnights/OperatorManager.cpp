@@ -9,11 +9,12 @@
 UOperatorManager::UOperatorManager()
 {
 	m_selectedTeamNum = 0;
-	m_maxTeamNum = 4;
+	
 	m_httpSystem = CreateDefaultSubobject<UHttpSystem>(TEXT("OperatorManager_HttpSystem"));
 	m_httpSystem->OnOperatorResponsReceiveCallback.AddDynamic(this, &UOperatorManager::OnOperatorResponsRecived);
 	m_httpSystem->OnTeamResponsReceiveCallback.AddDynamic(this, &UOperatorManager::OnTeamResponsRecived);
 
+	m_maxTeamNum = 4;
 	for (uint8 i = 0; i < m_maxTeamNum; i++)
 	{
 		FTeamInfo emptyTeam;

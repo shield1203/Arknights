@@ -14,7 +14,7 @@ ALobbyGameMode::ALobbyGameMode()
 	static ConstructorHelpers::FClassFinder<UUserWidget> LobbyWidget(TEXT("/Game/Widget/Lobby/WB_LobbyOptionButtons"));
 	if (LobbyWidget.Succeeded())
 	{
-		AddWidget(LobbyWidget.Class);
+		m_mainWidget = CreateWidget(GetWorld(), LobbyWidget.Class);
 	}
 }
 
@@ -22,6 +22,8 @@ void ALobbyGameMode::StartPlay()
 {
 	Super::StartPlay();
 
+	SetMainWidget();
+	AddToViewSubWidgets();
 	RequestLobbyData();
 }
 

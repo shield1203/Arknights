@@ -10,10 +10,10 @@ class ARKNIGHTS_API UWidgetManager : public UObject
 	GENERATED_BODY()
 	
 private:
-	UPROPERTY(EditAnyWhere, BlueprintReadWrite, Category = "WidgetManager")
+	UPROPERTY(EditAnyWhere, Category = "WidgetManager")
 	UUserWidget* m_mainWidget;
 
-	UPROPERTY(EditAnyWhere, BlueprintReadWrite, Category = "WidgetManager")
+	UPROPERTY(EditAnyWhere, Category = "WidgetManager")
 	TArray<UUserWidget*> m_subWidgets;
 
 public:
@@ -33,6 +33,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "WidgetManager")
 	void AddToViewportSubWidgets();
+
+	UFUNCTION(BlueprintCallable, Category = "WidgetManager")
+	void RemoveFromViewportSubWidget(UUserWidget* subWidget);
 
 	UFUNCTION(BlueprintCallable, Category = "WidgetManager")
 	void RemoveFromViewportSubWidgets();

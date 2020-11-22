@@ -13,8 +13,15 @@ ALoginGameMode::ALoginGameMode()
 	static ConstructorHelpers::FClassFinder<UUserWidget> LoginWidget(TEXT("/Game/Widget/Login/WB_LoginMain"));
 	if (LoginWidget.Succeeded())
 	{
-		AddWidget(LoginWidget.Class);
+		m_mainWidget = CreateWidget(GetWorld(), LoginWidget.Class);
 	}
+}
+
+void ALoginGameMode::StartPlay()
+{
+	Super::StartPlay();
+
+	SetMainWidget();
 }
 
 void ALoginGameMode::SaveLoginData(FString Email, FString id)

@@ -3,7 +3,6 @@
 
 UWidgetManager::UWidgetManager()
 {
-
 }
 
 void UWidgetManager::SetMainWidget(UUserWidget* mainWidget)
@@ -39,6 +38,11 @@ void UWidgetManager::AddToViewportSubWidgets()
 	{
 		subWidget->AddToViewport();
 	}
+}
+
+void UWidgetManager::RemoveFromViewportSubWidget(UUserWidget* subWidget)
+{
+	subWidget->RemoveFromViewport();
 }
 
 void UWidgetManager::RemoveFromViewportSubWidgets()
