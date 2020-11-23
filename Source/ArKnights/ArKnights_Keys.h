@@ -15,6 +15,7 @@ namespace data_table_keys
 	TCHAR const* const opertator = TEXT("/Game/DataTable/Operator");
 	TCHAR const* const exp = TEXT("/Game/DataTable/Exp");
 	TCHAR const* const operation = TEXT("/Game/DataTable/Operation");
+	TCHAR const* const operatorExp = TEXT("/Game/DataTable/OperatorExp");
 }
 
 namespace shop_menu_keys

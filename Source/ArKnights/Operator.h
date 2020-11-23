@@ -105,24 +105,50 @@ public:
 	FString Thumbnail;
 };
 
+USTRUCT(BlueprintType)
+struct FOperatorExpData : public FTableRowBase
+{
+	GENERATED_BODY()
+
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float MaxExp;
+};
+
 UCLASS(Blueprintable, ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class ARKNIGHTS_API UOperator : public UObject
 {
 	GENERATED_BODY()
 	
 protected:
+	UPROPERTY()
 	EOperatorCode m_code;
 
-	uint8 m_level;
+	UPROPERTY()
+	int32 m_level;
 
+	UPROPERTY()
+	float m_curExp;
+
+	UPROPERTY()
+	int32 m_rank;
+
+	UPROPERTY()
+	int32 m_potentialAbility;
+
+	UPROPERTY()
+	int32 m_reliability;
+
+	UPROPERTY()
 	FOperatorData m_data;
 
+	UPROPERTY()
 	class UTexture2D* m_thumbnail;
 
 public:
 	UOperator();
 	
-	void Initialize(EOperatorCode code, uint8 level);
+	void Initialize(EOperatorCode code, int32 level, float curExp, int32 rank, int32 potentialAbility, int32 reliability);
 
 	void LoadOperatorData(EOperatorCode Operatorcode);
 
@@ -130,14 +156,29 @@ public:
 	int32 GetCode() const;
 
 	UFUNCTION(BlueprintCallable)
-	FString GetName() const;
+	int32 GetLevel() const;
 
 	UFUNCTION(BlueprintCallable)
-	class UTexture2D* GetThumbnail() const;
+	float GetExpPercent();
+
+	UFUNCTION(BlueprintCallable)
+	int32 GetRank() const;
+
+	UFUNCTION(BlueprintCallable)
+	int32 GetPotentialAbility() const ;
+
+	UFUNCTION(BlueprintCallable)
+	int32 GetReliability() const;
+
+	UFUNCTION(BlueprintCallable)
+	FString GetName() const;
 
 	UFUNCTION(BlueprintCallable)
 	EOperatorRarity GetRarity() const;
 
 	UFUNCTION(BlueprintCallable)
 	EOperatorClass GetClass() const;
+
+	UFUNCTION(BlueprintCallable)
+	class UTexture2D* GetThumbnail() const;
 };

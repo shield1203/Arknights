@@ -8,6 +8,9 @@
 
 UOperatorManager::UOperatorManager()
 {
+	m_sortType = EOperatorSort::Level;
+	m_ascendingOrder = false;
+
 	m_selectedTeamNum = 0;
 	
 	m_httpSystem = CreateDefaultSubobject<UHttpSystem>(TEXT("OperatorManager_HttpSystem"));
@@ -80,9 +83,26 @@ void UOperatorManager::SetOperators(FString operators)
 	for (auto operatorData : operatorInfo)
 	{
 		UOperator* pAddOperator = NewObject<UOperator>(this, UOperator::StaticClass());
-		pAddOperator->Initialize(operatorData.operator_code, operatorData.level);
+		pAddOperator->Initialize(operatorData.operator_code, operatorData.level, operatorData.cur_exp, operatorData.rank, operatorData.potential_ability, operatorData.reliability);
 		m_operators.Add(operatorData.operator_code, pAddOperator);
 	}
+}
+
+void UOperatorManager::SetSortType(EOperatorSort sortType)
+{
+	if (m_sortType == sortType)
+	{
+		ToggleAscendingOrder();
+	}
+	else
+	{
+		m_sortType = sortType;
+	}
+}
+
+void UOperatorManager::ToggleAscendingOrder()
+{
+	m_ascendingOrder = m_ascendingOrder ? false : true;
 }
 
 void UOperatorManager::SetSelectedTeamNum(int32 selectNum)
@@ -140,7 +160,89 @@ void UOperatorManager::ChangeMemeber(int32 oldMemberCode, int32 newMemberCode)
 
 TMap<EOperatorCode, UOperator*> UOperatorManager::GetOperators()
 {
+	switch (m_sortType)
+	{
+	case EOperatorSort::Level: SortOperatorToLevel(); break;
+	case EOperatorSort::Rarity: SortOperatorToRarity(); break;
+	case EOperatorSort::Reliability: SortOperatorToReliability(); break;
+	case EOperatorSort::Name: SortOperatorToName(); break;
+	}
+
 	return m_operators;
+}
+
+EOperatorSort UOperatorManager::GetSortType() const
+{
+	return m_sortType;
+}
+
+bool UOperatorManager::IsAscendingOrder() const
+{
+	return m_ascendingOrder;
+}
+
+void UOperatorManager::SortOperatorToLevel()
+{
+	if (m_ascendingOrder)
+	{
+		m_operators.ValueSort([](const UOperator& A, const UOperator& B) {
+			return A.GetLevel() < B.GetLevel();
+		});
+	}
+	else
+	{
+		m_operators.ValueSort([](const UOperator& A, const UOperator& B) {
+			return A.GetLevel() > B.GetLevel();
+			});
+	}
+}
+
+void UOperatorManager::SortOperatorToRarity()
+{
+	if (m_ascendingOrder)
+	{
+		m_operators.ValueSort([](const UOperator& A, const UOperator& B) {
+			return A.GetRarity() < B.GetRarity();
+			});
+	}
+	else
+	{
+		m_operators.ValueSort([](const UOperator& A, const UOperator& B) {
+			return A.GetRarity() > B.GetRarity();
+			});
+	}
+}
+
+void UOperatorManager::SortOperatorToReliability()
+{
+	if (m_ascendingOrder)
+	{
+		m_operators.ValueSort([](const UOperator& A, const UOperator& B) {
+			return A.GetReliability() < B.GetReliability();
+			});
+	}
+	else
+	{
+		m_operators.ValueSort([](const UOperator& A, const UOperator& B) {
+			return A.GetReliability() > B.GetReliability();
+			});
+	}
+}
+
+void UOperatorManager::SortOperatorToName()
+{
+	if (m_ascendingOrder)
+	{
+		m_operators.ValueSort([](const UOperator& A, const UOperator& B) {
+			return A.GetName().Compare(B.GetName()) < 0;
+			});
+	}
+	else
+	{
+		m_operators.ValueSort([](const UOperator& A, const UOperator& B) {
+			return A.GetName().Compare(B.GetName()) > 0;
+			});
+	}
 }
 
 int32 UOperatorManager::GetSelectedTeamNum() const

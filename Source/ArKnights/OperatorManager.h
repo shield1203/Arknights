@@ -7,6 +7,15 @@
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FTeamUpdateDelegate);
 
+UENUM(BlueprintType)
+enum class EOperatorSort : uint8
+{
+	Level UMETA(DisplayName = "OperatorSort_Level"),
+	Rarity UMETA(DisplayName = "OperatorSort_Rarity"),
+	Reliability UMETA(DisplayName = "OperatorSort_Reliability"),
+	Name UMETA(DisplayName = "OperatorSort_Name"),
+};
+
 USTRUCT()
 struct FOperatorInfo
 {
@@ -23,19 +32,19 @@ public:
 	EOperatorCode operator_code;
 
 	UPROPERTY()
-	uint32 level;
+	int32 level;
 
 	UPROPERTY()
-	uint64 cur_exp;
+	float cur_exp;
 	
 	UPROPERTY()
-	uint32 rank;
+	int32 rank;
 
 	UPROPERTY()
-	uint8 potential_ability;
+	int32 potential_ability;
 
 	UPROPERTY()
-	uint32 reliability;
+	int32 reliability;
 };
 
 USTRUCT(BlueprintType)
@@ -64,11 +73,18 @@ private:
 	TMap<EOperatorCode, UOperator*> m_operators;
 
 	UPROPERTY()
+	EOperatorSort m_sortType;
+
+	UPROPERTY()
+	bool m_ascendingOrder;
+
+	UPROPERTY()
 	TArray<FTeamInfo> m_teams;
 
 	UPROPERTY()
 	int32 m_selectedTeamNum;
 
+	UPROPERTY()
 	int32 m_maxTeamNum;
 
 public:
@@ -97,6 +113,12 @@ public:
 	void SetOperators(FString operators);
 
 	UFUNCTION(BlueprintCallable, Category = "OperatorManager")
+	void SetSortType(EOperatorSort sortType);
+
+	UFUNCTION(BlueprintCallable, Category = "OperatorManager")
+	void ToggleAscendingOrder();
+
+	UFUNCTION(BlueprintCallable, Category = "OperatorManager")
 	void SetSelectedTeamNum(int32 selectNum);
 
 	UFUNCTION(BlueprintCallable, Category = "OperatorManager")
@@ -119,6 +141,24 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "OperatorManager")
 	TMap<EOperatorCode, UOperator*> GetOperators();
+
+	UFUNCTION(BlueprintCallable, Category = "OperatorManager")
+	EOperatorSort GetSortType() const;
+
+	UFUNCTION(BlueprintCallable, Category = "OperatorManager")
+	bool IsAscendingOrder() const;
+
+	UFUNCTION(BlueprintCallable, Category = "OperatorManager")
+	void SortOperatorToLevel();
+
+	UFUNCTION(BlueprintCallable, Category = "OperatorManager")
+	void SortOperatorToRarity();
+
+	UFUNCTION(BlueprintCallable, Category = "OperatorManager")
+	void SortOperatorToReliability();
+
+	UFUNCTION(BlueprintCallable, Category = "OperatorManager")
+	void SortOperatorToName();
 
 	UFUNCTION(BlueprintCallable, Category = "OperatorManager")
 	int32 GetSelectedTeamNum() const;

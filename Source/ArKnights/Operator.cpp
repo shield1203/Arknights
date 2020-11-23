@@ -8,10 +8,14 @@ UOperator::UOperator()
 
 }
 
-void UOperator::Initialize(EOperatorCode code, uint8 level)
+void UOperator::Initialize(EOperatorCode code, int32 level, float curExp, int32 rank, int32 potentialAbility, int32 reliability)
 {
 	m_code = code;
 	m_level = level;
+	m_curExp = curExp;
+	m_rank = rank;
+	m_potentialAbility = potentialAbility;
+	m_reliability = reliability;
 
 	LoadOperatorData(m_code);
 }
@@ -50,14 +54,47 @@ int32 UOperator::GetCode() const
 	return static_cast<int32>(m_code);
 }
 
+int32 UOperator::GetLevel() const
+{
+	return m_level;
+}
+
+float UOperator::GetExpPercent()
+{
+	UWorld* pWorld = GetWorld();
+
+	UArKnightsGameInstance* pGameInstance = pWorld ? pWorld->GetGameInstance<UArKnightsGameInstance>() : nullptr;
+
+	if (!pGameInstance)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("GameInstance nullptr"));
+		return 0;
+	}
+
+	FOperatorExpData* pExpData = pGameInstance->GetDataTable(EGameDataTable::OperatorExpData)->FindRow<FOperatorExpData>(FName(*(FString::FormatAsNumber(m_level))), FString(""));
+
+	return m_curExp / pExpData->MaxExp;
+}
+
+int32 UOperator::GetRank() const
+{
+	return m_rank;
+}
+
+int32 UOperator::GetPotentialAbility() const
+{
+	return m_potentialAbility;
+}
+
+int32 UOperator::GetReliability() const
+{
+	return m_reliability;
+}
+
+
 FString UOperator::GetName() const
 {
 	return m_data.Name;
-}
-
-UTexture2D* UOperator::GetThumbnail() const
-{
-	return m_thumbnail;
 }
 
 EOperatorRarity UOperator::GetRarity() const
@@ -68,4 +105,9 @@ EOperatorRarity UOperator::GetRarity() const
 EOperatorClass UOperator::GetClass() const
 {
 	return m_data.Class;
+}
+
+UTexture2D* UOperator::GetThumbnail() const
+{
+	return m_thumbnail;
 }
