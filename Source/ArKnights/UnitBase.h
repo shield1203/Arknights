@@ -45,17 +45,10 @@ class ARKNIGHTS_API AUnitBase : public APaperCharacter
 	
 protected:
 	UPROPERTY()
-	EUnitState m_state;
-
-	UPROPERTY()
 	ESightDerection m_sightt;
 
 public:
 	AUnitBase();
 
-	UFUNCTION(BlueprintCallable)
-	void SetUnitState(EUnitState unitState);
-
-	UFUNCTION(BlueprintCallable)
-	void UpdateAnimation();
+	virtual void UpdateAnimation() {};
 };
