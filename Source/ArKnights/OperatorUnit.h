@@ -38,6 +38,25 @@ public:
 	FString Path;
 };
 
+USTRUCT(BlueprintType)
+struct FOperatorFlipbook
+{
+	GENERATED_BODY()
+
+public:
+	UPROPERTY()
+	int32 frame;
+
+	UPROPERTY()
+	int32 x;
+
+	UPROPERTY()
+	int32 y;
+
+	UPROPERTY()
+	class UPaperFlipbook* Animation;
+};
+
 UCLASS()
 class ARKNIGHTS_API AOperatorUnit : public AUnitBase
 {
@@ -47,6 +66,23 @@ protected:
 	UPROPERTY()
 	EOperatorUnitState m_state;
 	
+	UPROPERTY()
+	TArray<FOperatorFlipbook>m_frontFlipbook;
+
+	UPROPERTY()
+	TArray<FOperatorFlipbook>m_backFlipbook;
+
+	class UPaperFlipbook* m_animation;
+
+	virtual void BeginPlay() override;
+
 public:
 	AOperatorUnit();
+
+	virtual void Initialize();
+
+	void LoadFlipbookData();
+
+	UFUNCTION(BlueprintCallable)
+	void SetUnitState(EOperatorUnitState state);
 };
