@@ -17,19 +17,11 @@ void AOperatorUnit::BeginPlay()
 
 void AOperatorUnit::Initialize()
 {
-	m_animation = LoadObject<UPaperFlipbook>(this, TEXT("/Game/Flipbook/Hoshiguma/Hoshiguma_Attack_back"));
-	GetSprite()->SetFlipbook(m_animation);
+	//m_animation = LoadObject<UPaperFlipbook>(this, TEXT("/Game/Flipbook/Hoshiguma/Hoshiguma_Attack_back"));
+	//GetSprite()->SetFlipbook(m_animation);
 }
 
 void AOperatorUnit::LoadFlipbookData()
 {
 
-}
-
-void AOperatorUnit::SetUnitState(EOperatorUnitState state)
-{
-	if (state != m_state)
-	{
-
-	}
 }

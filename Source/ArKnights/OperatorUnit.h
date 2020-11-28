@@ -7,13 +7,16 @@
 #include "OperatorUnit.generated.h"
 
 UENUM(BlueprintType)
-enum class EOperatorUnitState : uint8
+enum class EOperatorUnitFlipbook : uint8
 {
-	Start UMETA(DisplayName = "Unit_Start"),
-	Idle UMETA(DisplayName = "Unit_Idle"),
-	Attack UMETA(DisplayName = "Unit_Attack"),
-	Skill UMETA(DisplayName = "Unit_Skill"),
-	Die UMETA(DisplayName = "Unit_Die"),
+	Start UMETA(DisplayName = "Flipbook_Start"),
+	Start_Back UMETA(DisplayName = "Flipbook_Start_Back"),
+	Idle UMETA(DisplayName = "Flipbook_Idle"),
+	Idle_Back UMETA(DisplayName = "Flipbook_Idle_Back"),
+	Attack UMETA(DisplayName = "Flipbook_Attack"),
+	Attack_Back UMETA(DisplayName = "Flipbook_Attack_Back"),
+	Attack_Down UMETA(DisplayName = "Flipbook_Attack_Down"),
+	Die UMETA(DisplayName = "Flipbook_Die"),
 };
 
 USTRUCT(BlueprintType)
@@ -29,10 +32,13 @@ public:
 	int32 Frame;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int32 CenterX;
+	float X;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int32 CenterY;
+	float Y;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float Z;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FString Path;
@@ -64,7 +70,7 @@ class ARKNIGHTS_API AOperatorUnit : public AUnitBase
 
 protected:
 	UPROPERTY()
-	EOperatorUnitState m_state;
+	EOperatorUnitFlipbook m_filpbookState;
 	
 	UPROPERTY()
 	TArray<FOperatorFlipbook>m_frontFlipbook;
@@ -72,7 +78,7 @@ protected:
 	UPROPERTY()
 	TArray<FOperatorFlipbook>m_backFlipbook;
 
-	class UPaperFlipbook* m_animation;
+	//class UPaperFlipbook* m_animation;
 
 	virtual void BeginPlay() override;
 
@@ -82,7 +88,4 @@ public:
 	virtual void Initialize();
 
 	void LoadFlipbookData();
-
-	UFUNCTION(BlueprintCallable)
-	void SetUnitState(EOperatorUnitState state);
 };
