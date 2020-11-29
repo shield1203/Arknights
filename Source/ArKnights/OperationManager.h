@@ -119,14 +119,23 @@ public:
 	int32 GetOperationClearRank(int32 episode, int32 chapter) const;
 
 	UFUNCTION(BlueprintCallable)
-	FString GetOperationName(int32 episode, int32 chapter) const;
+	FString GetOperationName() const;
 
 	UFUNCTION(BlueprintCallable)
-	int32 GetOperationLevel(int32 episode, int32 chapter) const;
+	int32 GetOperationLevel() const;
 
 	UFUNCTION(BlueprintCallable)
-	int32 GetOperationSanity(int32 episode, int32 chapter) const;
+	int32 GetOperationSanity() const;
 
 	UFUNCTION(BlueprintCallable)
-	FString GetOperationExplanation(int32 episode, int32 chapter) const;
+	int32 GetOperationEnemies() const;
+
+	UFUNCTION(BlueprintCallable)
+	int32 GetOperationUnitLimit() const;
+
+	UFUNCTION(BlueprintCallable)
+	int32 GetOperationLifePoint() const;
+
+	UFUNCTION(BlueprintCallable)
+	FString GetOperationExplanation() const;
 };

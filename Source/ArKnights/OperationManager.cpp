@@ -166,7 +166,7 @@ int32 UOperationManager::GetOperationClearRank(int32 episode, int32 chapter) con
 	return 0;
 }
 
-FString UOperationManager::GetOperationName(int32 episode, int32 chapter) const
+FString UOperationManager::GetOperationName() const
 {
 	UWorld* pWorld = GetWorld();
 	UArKnightsGameInstance* pGameInstance = pWorld ? pWorld->GetGameInstance<UArKnightsGameInstance>() : nullptr;
@@ -174,7 +174,7 @@ FString UOperationManager::GetOperationName(int32 episode, int32 chapter) const
 	for (int32 i = 0; i < pGameInstance->GetDataTable(EGameDataTable::OperationData)->GetRowNames().Num(); i++)
 	{
 		FOperationData* pOperationData = pGameInstance->GetDataTable(EGameDataTable::OperationData)->FindRow<FOperationData>(FName(*(FString::FormatAsNumber(static_cast<int32>(i)))), FString(""));
-		if (episode == pOperationData->Episode && chapter == pOperationData->Chapter)
+		if (m_curEpisode == pOperationData->Episode && m_curChapter == pOperationData->Chapter)
 		{
 			return pOperationData->Name;
 		}
@@ -183,7 +183,7 @@ FString UOperationManager::GetOperationName(int32 episode, int32 chapter) const
 	return TEXT("Unknown");
 }
 
-int32 UOperationManager::GetOperationLevel(int32 episode, int32 chapter) const
+int32 UOperationManager::GetOperationLevel() const
 {
 	UWorld* pWorld = GetWorld();
 	UArKnightsGameInstance* pGameInstance = pWorld ? pWorld->GetGameInstance<UArKnightsGameInstance>() : nullptr;
@@ -191,7 +191,7 @@ int32 UOperationManager::GetOperationLevel(int32 episode, int32 chapter) const
 	for (int32 i = 0; i < pGameInstance->GetDataTable(EGameDataTable::OperationData)->GetRowNames().Num(); i++)
 	{
 		FOperationData* pOperationData = pGameInstance->GetDataTable(EGameDataTable::OperationData)->FindRow<FOperationData>(FName(*(FString::FormatAsNumber(static_cast<int32>(i)))), FString(""));
-		if (episode == pOperationData->Episode && chapter == pOperationData->Chapter)
+		if (m_curEpisode == pOperationData->Episode && m_curChapter == pOperationData->Chapter)
 		{
 			return pOperationData->Level;
 		}
@@ -200,7 +200,7 @@ int32 UOperationManager::GetOperationLevel(int32 episode, int32 chapter) const
 	return 0;
 }
 
-int32 UOperationManager::GetOperationSanity(int32 episode, int32 chapter) const
+int32 UOperationManager::GetOperationSanity() const
 {
 	UWorld* pWorld = GetWorld();
 	UArKnightsGameInstance* pGameInstance = pWorld ? pWorld->GetGameInstance<UArKnightsGameInstance>() : nullptr;
@@ -208,7 +208,7 @@ int32 UOperationManager::GetOperationSanity(int32 episode, int32 chapter) const
 	for (int32 i = 0; i < pGameInstance->GetDataTable(EGameDataTable::OperationData)->GetRowNames().Num(); i++)
 	{
 		FOperationData* pOperationData = pGameInstance->GetDataTable(EGameDataTable::OperationData)->FindRow<FOperationData>(FName(*(FString::FormatAsNumber(static_cast<int32>(i)))), FString(""));
-		if (episode == pOperationData->Episode && chapter == pOperationData->Chapter)
+		if (m_curEpisode == pOperationData->Episode && m_curChapter == pOperationData->Chapter)
 		{
 			return pOperationData->Sanity;
 		}
@@ -217,7 +217,7 @@ int32 UOperationManager::GetOperationSanity(int32 episode, int32 chapter) const
 	return 0;
 }
 
-FString UOperationManager::GetOperationExplanation(int32 episode, int32 chapter) const
+int32 UOperationManager::GetOperationEnemies() const
 {
 	UWorld* pWorld = GetWorld();
 	UArKnightsGameInstance* pGameInstance = pWorld ? pWorld->GetGameInstance<UArKnightsGameInstance>() : nullptr;
@@ -225,7 +225,58 @@ FString UOperationManager::GetOperationExplanation(int32 episode, int32 chapter)
 	for (int32 i = 0; i < pGameInstance->GetDataTable(EGameDataTable::OperationData)->GetRowNames().Num(); i++)
 	{
 		FOperationData* pOperationData = pGameInstance->GetDataTable(EGameDataTable::OperationData)->FindRow<FOperationData>(FName(*(FString::FormatAsNumber(static_cast<int32>(i)))), FString(""));
-		if (episode == pOperationData->Episode && chapter == pOperationData->Chapter)
+		if (m_curEpisode == pOperationData->Episode && m_curChapter == pOperationData->Chapter)
+		{
+			return pOperationData->Enemies;
+		}
+	}
+
+	return 0;
+}
+
+int32 UOperationManager::GetOperationUnitLimit() const
+{
+	UWorld* pWorld = GetWorld();
+	UArKnightsGameInstance* pGameInstance = pWorld ? pWorld->GetGameInstance<UArKnightsGameInstance>() : nullptr;
+
+	for (int32 i = 0; i < pGameInstance->GetDataTable(EGameDataTable::OperationData)->GetRowNames().Num(); i++)
+	{
+		FOperationData* pOperationData = pGameInstance->GetDataTable(EGameDataTable::OperationData)->FindRow<FOperationData>(FName(*(FString::FormatAsNumber(static_cast<int32>(i)))), FString(""));
+		if (m_curEpisode == pOperationData->Episode && m_curChapter == pOperationData->Chapter)
+		{
+			return pOperationData->UnitLimit;
+		}
+	}
+
+	return 0;
+}
+
+int32 UOperationManager::GetOperationLifePoint() const
+{
+	UWorld* pWorld = GetWorld();
+	UArKnightsGameInstance* pGameInstance = pWorld ? pWorld->GetGameInstance<UArKnightsGameInstance>() : nullptr;
+
+	for (int32 i = 0; i < pGameInstance->GetDataTable(EGameDataTable::OperationData)->GetRowNames().Num(); i++)
+	{
+		FOperationData* pOperationData = pGameInstance->GetDataTable(EGameDataTable::OperationData)->FindRow<FOperationData>(FName(*(FString::FormatAsNumber(static_cast<int32>(i)))), FString(""));
+		if (m_curEpisode == pOperationData->Episode && m_curChapter == pOperationData->Chapter)
+		{
+			return pOperationData->LifePoint;
+		}
+	}
+
+	return 0;
+}
+
+FString UOperationManager::GetOperationExplanation() const
+{
+	UWorld* pWorld = GetWorld();
+	UArKnightsGameInstance* pGameInstance = pWorld ? pWorld->GetGameInstance<UArKnightsGameInstance>() : nullptr;
+
+	for (int32 i = 0; i < pGameInstance->GetDataTable(EGameDataTable::OperationData)->GetRowNames().Num(); i++)
+	{
+		FOperationData* pOperationData = pGameInstance->GetDataTable(EGameDataTable::OperationData)->FindRow<FOperationData>(FName(*(FString::FormatAsNumber(static_cast<int32>(i)))), FString(""));
+		if (m_curEpisode == pOperationData->Episode && m_curChapter == pOperationData->Chapter)
 		{
 			return pOperationData->Explanation;
 		}
