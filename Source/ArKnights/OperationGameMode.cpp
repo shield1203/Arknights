@@ -1,12 +1,18 @@
 #include "OperationGameMode.h"
 #include "ArKnightsGameInstance.h"
 #include "OperationManager.h"
+#include "OperationController.h"
+#include "OperationSpectator.h"
 #include "Blueprint/UserWidget.h"
 #include "UObject/ConstructorHelpers.h"
 #include "TimerManager.h"
 
 AOperationGameMode::AOperationGameMode()
 {
+	PlayerControllerClass = AOperationController::StaticClass();
+	SpectatorClass = AOperationSpectator::StaticClass();
+	DefaultPawnClass = AOperationSpectator::StaticClass();
+
 	static ConstructorHelpers::FClassFinder<UUserWidget> OperationWidget(TEXT("/Game/Widget/Operation/WB_Operation"));
 	if (OperationWidget.Succeeded())
 	{
@@ -53,4 +59,9 @@ void AOperationGameMode::AddCostGauge()
 		AddCost(1);
 		m_costGauge -= 1;
 	}
+}
+
+void AOperationGameMode::AddDieEnemyCount()
+{
+	m_dieEnemyCount += 1;
 }

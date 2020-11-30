@@ -292,6 +292,17 @@ TArray<UOperator*> UOperatorManager::GetCurTeamMember()
 	return teamMember;
 }
 
+TArray<UOperator*> UOperatorManager::GetOperationMember()
+{
+	TArray<UOperator*> operationMember = GetCurTeamMember();
+
+	operationMember.Sort([](const UOperator& A, const UOperator& B) {
+		return A.GetCost() < B.GetCost();
+		});
+
+	return operationMember;
+}
+
 TArray<UOperator*> UOperatorManager::GetExceptCurTeamMember()
 {
 	TArray<UOperator*> ExceptedMember;

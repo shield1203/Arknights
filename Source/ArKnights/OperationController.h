@@ -13,9 +13,9 @@ protected:
 	virtual void PlayerTick(float DeltaTime) override;
 	virtual void SetupInputComponent() override;
 
-	
+	void OnUnitControllPressed();
+	void OnUnitControllReleased();
 
 public:
 	AOperationController();
-
 };

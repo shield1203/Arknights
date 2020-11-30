@@ -41,12 +41,16 @@ void UOperator::LoadOperatorData(EOperatorCode Operatorcode)
 	m_data.MaxHP = pOperatorData->MaxHP;
 	m_data.ATK = pOperatorData->ATK;
 	m_data.DEF = pOperatorData->DEF;
-	m_data.RES = pOperatorData->RES;
-	m_data.RDP = pOperatorData->RDP;
-	m_data.DP = pOperatorData->DP;
+	m_data.Cost = pOperatorData->Cost;
+	m_data.Replacement = pOperatorData->Replacement;
 	m_data.Block = pOperatorData->Block;
-	m_data.ASPD = pOperatorData->ASPD;
 	m_thumbnail = Cast<UTexture2D>(StaticLoadObject(UTexture2D::StaticClass(), nullptr, *(pOperatorData->Thumbnail)));
+	m_miniThumbnail = Cast<UTexture2D>(StaticLoadObject(UTexture2D::StaticClass(), nullptr, *(pOperatorData->MiniThumbnail)));
+}
+
+EOperatorCode UOperator::GetOperatorCode() const
+{
+	return m_code;
 }
 
 int32 UOperator::GetCode() const
@@ -107,7 +111,17 @@ EOperatorClass UOperator::GetClass() const
 	return m_data.Class;
 }
 
+int32 UOperator::GetCost() const
+{
+	return m_data.Cost;
+}
+
 UTexture2D* UOperator::GetThumbnail() const
 {
 	return m_thumbnail;
+}
+
+UTexture2D* UOperator::GetMiniThumbnail() const
+{
+	return m_miniThumbnail;
 }

@@ -173,5 +173,8 @@ public:
 	TArray<UOperator*> GetCurTeamMember();
 
 	UFUNCTION(BlueprintCallable, Category = "OperatorManager")
+	TArray<UOperator*> GetOperationMember();
+
+	UFUNCTION(BlueprintCallable, Category = "OperatorManager")
 	TArray<UOperator*> GetExceptCurTeamMember();
 };

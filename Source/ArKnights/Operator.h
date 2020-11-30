@@ -78,31 +78,28 @@ public:
 	EFaction Faction;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int32 MaxHP;
+	float MaxHP;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int32 ATK;
+	float ATK;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int32 DEF;
+	float DEF;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int32 RES;
+	int32 Cost;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int32 RDP;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int32 DP;
+	float Replacement;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	uint8 Block;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float ASPD;
+	FString Thumbnail;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FString Thumbnail;
+	FString MiniThumbnail;
 };
 
 USTRUCT(BlueprintType)
@@ -145,12 +142,18 @@ protected:
 	UPROPERTY()
 	class UTexture2D* m_thumbnail;
 
+	UPROPERTY()
+	class UTexture2D* m_miniThumbnail;
+
 public:
 	UOperator();
 	
 	void Initialize(EOperatorCode code, int32 level, float curExp, int32 rank, int32 potentialAbility, int32 reliability);
 
 	void LoadOperatorData(EOperatorCode Operatorcode);
+
+	UFUNCTION(BlueprintCallable)
+	EOperatorCode GetOperatorCode() const;
 
 	UFUNCTION(BlueprintCallable)
 	int32 GetCode() const;
@@ -180,5 +183,11 @@ public:
 	EOperatorClass GetClass() const;
 
 	UFUNCTION(BlueprintCallable)
+	int32 GetCost() const;
+
+	UFUNCTION(BlueprintCallable)
 	class UTexture2D* GetThumbnail() const;
+
+	UFUNCTION(BlueprintCallable)
+	class UTexture2D* GetMiniThumbnail() const;
 };

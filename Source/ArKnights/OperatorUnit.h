@@ -69,16 +69,16 @@ class ARKNIGHTS_API AOperatorUnit : public AUnitBase
 	GENERATED_BODY()
 
 protected:
-	UPROPERTY()
+	/*UPROPERTY()
 	EOperatorUnitFlipbook m_filpbookState;
 	
 	UPROPERTY()
 	TArray<FOperatorFlipbook>m_frontFlipbook;
 
 	UPROPERTY()
-	TArray<FOperatorFlipbook>m_backFlipbook;
+	TArray<FOperatorFlipbook>m_backFlipbook;*/
 
-	//class UPaperFlipbook* m_animation;
+	class UPaperFlipbook* m_animation;
 
 	virtual void BeginPlay() override;
 
@@ -88,4 +88,6 @@ public:
 	virtual void Initialize();
 
 	void LoadFlipbookData();
+
+	void SetUnitVector();
 };
