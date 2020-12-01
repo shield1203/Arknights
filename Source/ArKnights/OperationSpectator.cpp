@@ -1,5 +1,4 @@
 #include "OperationSpectator.h"
-#include "OperatorUnit.h"
 #include "PlacementUnitActor.h"
 
 AOperationSpectator::AOperationSpectator()
