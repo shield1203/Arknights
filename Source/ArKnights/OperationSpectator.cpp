@@ -1,5 +1,6 @@
 #include "OperationSpectator.h"
 #include "OperatorUnit.h"
+#include "PlacementUnitActor.h"
 
 AOperationSpectator::AOperationSpectator()
 {
@@ -38,34 +39,27 @@ void AOperationSpectator::StartPrepareUnit(UOperator* operatorData)
 	{
 		FActorSpawnParameters SpawnParams;
 		SpawnParams.Owner = this;
-		FRotator rotator;
-		FVector SpawnLocation;
 
-		m_prepareUnit = World->SpawnActor<AOperatorUnit>(SpawnLocation, rotator, SpawnParams);
-		
-		if (m_prepareUnit)
+		m_placementUnit = World->SpawnActor<APlacementUnitActor>(FVector(), FRotator(), SpawnParams);
+
+		if (m_placementUnit)
 		{
-			m_prepareUnit->Initialize();
-			FRotator rotator1;
-			rotator1.Yaw = 90.0f;
-			//m_prepareUnit->AddActorLocalRotation(rotator1);
-			UE_LOG(LogTemp, Warning, TEXT("Good"));
-		}
-		else
-		{
-			UE_LOG(LogTemp, Warning, TEXT("Fail!!!!!!!!!!!!!"));
+			m_placementUnit->Initialize(m_selectedOperator);
 		}
 	}
 }
 
 void AOperationSpectator::SetPrepareUnitLocation(const FVector DestLocation)
 {
-	if (m_prepareUnit == nullptr) return;
+	if (m_placementUnit == nullptr) return;
 
-	m_prepareUnit->SetActorLocation(DestLocation);
+	m_placementUnit->SetActorLocation(DestLocation);
 }
 
 void AOperationSpectator::FinishPrepareUnitSetUp()
 {
 	m_prepareUnitSetUp = false;
+
+	m_placementUnit->Destroy();
+	m_placementUnit = nullptr;
 }

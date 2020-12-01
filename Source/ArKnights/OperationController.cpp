@@ -21,7 +21,6 @@ void AOperationController::PlayerTick(float DeltaTime)
 			if (Hit.bBlockingHit)
 			{
 				MyPawn->SetPrepareUnitLocation(Hit.ImpactPoint);
-				UE_LOG(LogTemp, Warning, TEXT("%s"), *Hit.ImpactPoint.ToString());
 			}
 		}
 	}

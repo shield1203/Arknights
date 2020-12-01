@@ -5,7 +5,7 @@
 #include "Operator.h"
 #include "OperationSpectator.generated.h"
 
-class AOperatorUnit;
+class APlacementUnitActor;
 
 UCLASS()
 class ARKNIGHTS_API AOperationSpectator : public ASpectatorPawn
@@ -23,7 +23,7 @@ private:
 	EOperatorCode m_selectedOperator;
 
 	UPROPERTY()
-	AOperatorUnit* m_prepareUnit;
+	APlacementUnitActor* m_placementUnit;
 
 	UPROPERTY()
 	TArray<EOperatorCode> m_setUpOperators;

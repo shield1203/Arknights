@@ -19,6 +19,7 @@ enum class EGameDataTable : uint8
 	ExpData UMETA(DisplayName = "DT_ExpData"),
 	OperationData UMETA(DisplayName = "DT_OperationData"),
 	OperatorExpData UMETA(DisplayName = "DT_OperatorExpData"),
+	OperatorFlipbookData UMETA(DisplayName = "DT_OperatorFlipbookData"),
 };
 
 UCLASS(BlueprintType)

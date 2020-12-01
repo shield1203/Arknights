@@ -6,43 +6,7 @@
 #include "Engine/DataTable.h"
 #include "OperatorUnit.generated.h"
 
-UENUM(BlueprintType)
-enum class EOperatorUnitFlipbook : uint8
-{
-	Start UMETA(DisplayName = "Flipbook_Start"),
-	Start_Back UMETA(DisplayName = "Flipbook_Start_Back"),
-	Idle UMETA(DisplayName = "Flipbook_Idle"),
-	Idle_Back UMETA(DisplayName = "Flipbook_Idle_Back"),
-	Attack UMETA(DisplayName = "Flipbook_Attack"),
-	Attack_Back UMETA(DisplayName = "Flipbook_Attack_Back"),
-	Attack_Down UMETA(DisplayName = "Flipbook_Attack_Down"),
-	Die UMETA(DisplayName = "Flipbook_Die"),
-};
 
-USTRUCT(BlueprintType)
-struct FOperatorFlipbookData : public FTableRowBase
-{
-	GENERATED_BODY()
-
-public:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	EOperatorCode OperatorCode;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int32 Frame;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float X;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float Y;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float Z;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FString Path;
-};
 
 USTRUCT(BlueprintType)
 struct FOperatorFlipbook
