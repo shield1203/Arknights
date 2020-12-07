@@ -103,6 +103,22 @@ public:
 };
 
 USTRUCT(BlueprintType)
+struct FOperatorRange : public FTableRowBase
+{
+	GENERATED_BODY()
+
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	EOperatorCode Code;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 XRange;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 YRange;
+};
+
+USTRUCT(BlueprintType)
 struct FOperatorExpData : public FTableRowBase
 {
 	GENERATED_BODY()
@@ -138,6 +154,9 @@ protected:
 
 	UPROPERTY()
 	FOperatorData m_data;
+
+	UPROPERTY()
+	TArray<FOperatorRange> m_attackRange;
 
 	UPROPERTY()
 	class UTexture2D* m_thumbnail;
@@ -184,6 +203,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	int32 GetCost() const;
+
+	UFUNCTION(BlueprintCallable)
+	TArray<FOperatorRange> GetAttackRange() const;
 
 	UFUNCTION(BlueprintCallable)
 	class UTexture2D* GetThumbnail() const;

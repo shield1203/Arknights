@@ -47,6 +47,8 @@ public:
 	FString Path;
 };
 
+
+
 UCLASS()
 class ARKNIGHTS_API UOperatorComponent : public UUnitComponent
 {
@@ -54,11 +56,17 @@ class ARKNIGHTS_API UOperatorComponent : public UUnitComponent
 	
 protected:
 	UPROPERTY()
-	EOperatorUnitFlipbook m_flipbookState;
+	EOperatorUnitFlipbook m_curState;
 
 	UPROPERTY()
-	TArray<class UPaperFlipbook*> m_flipbooks;
+	TMap<EOperatorUnitFlipbook, FFlipbookInfo> m_flipbooks;
 
 public:
 	UOperatorComponent();
+
+	void Start(EOperatorCode operatorCode);
+
+	void SetFlipbookTransform(float x, float y, float z);
+
+	void WithDraw();
 };

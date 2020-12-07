@@ -2,4 +2,5 @@
 
 UUnitComponent::UUnitComponent()
 {
+	SetReceivesDecals(false);
 }

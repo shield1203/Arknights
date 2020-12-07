@@ -29,6 +29,28 @@ enum class EUnitForm : uint8
 	Back UMETA(DisplayName = "Back"),
 };
 
+USTRUCT()
+struct FFlipbookInfo
+{
+	GENERATED_BODY()
+
+public:
+	UPROPERTY()
+	int32 frame;
+
+	UPROPERTY()
+	float X;
+
+	UPROPERTY()
+	float Y;
+
+	UPROPERTY()
+	float Z;
+
+	UPROPERTY()
+	class UPaperFlipbook* Flipbook;
+};
+
 UCLASS()
 class ARKNIGHTS_API UUnitComponent : public UPaperFlipbookComponent
 {

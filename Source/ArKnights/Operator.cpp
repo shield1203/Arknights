@@ -116,6 +116,11 @@ int32 UOperator::GetCost() const
 	return m_data.Cost;
 }
 
+TArray<FOperatorRange> UOperator::GetAttackRange() const
+{
+	return m_attackRange;
+}
+
 UTexture2D* UOperator::GetThumbnail() const
 {
 	return m_thumbnail;

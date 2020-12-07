@@ -20,6 +20,7 @@ UArKnightsGameInstance::UArKnightsGameInstance()
 	DataTablePath.Add(data_table_keys::operation);
 	DataTablePath.Add(data_table_keys::operatorExp);
 	DataTablePath.Add(data_table_keys::operatorFlipbook);
+	DataTablePath.Add(data_table_keys::operatorRange);
 
 	for (FString path : DataTablePath)
 	{

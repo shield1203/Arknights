@@ -20,13 +20,16 @@ private:
 	bool m_selectedOperatorButton = false;
 
 	UPROPERTY()
-	EOperatorCode m_selectedOperator;
+	EOperatorCode m_selectedOperatorCode;
 
 	UPROPERTY()
-	APlacementUnitActor* m_placementUnit;
+	EOperatorClass m_selectedOperatorClass;
 
 	UPROPERTY()
-	TArray<EOperatorCode> m_setUpOperators;
+	APlacementUnitActor* m_placementUnitActor;
+
+	UPROPERTY()
+	TArray<EOperatorCode> m_placementOperators;
 
 public:
 	AOperationSpectator();
@@ -35,17 +38,32 @@ public:
 	bool IsSelectedOperator(EOperatorCode operatorCode) const;
 
 	UFUNCTION(BlueprintCallable)
-	void SetSelectOperator(EOperatorCode operatorCode);
+	void SetSelectOperator(EOperatorCode operatorCode, EOperatorClass operatorClass);
+
+	UFUNCTION(BlueprintCallable)
+	EOperatorClass GetSelectedOperatorClass();
+
+	UFUNCTION(BlueprintCallable)
+	bool IsSelectedOperatorButton() const;
 
 	UFUNCTION(BlueprintCallable)
 	bool IsPrepareUnitSetUp() const;
 
 	UFUNCTION(BlueprintCallable)
+	bool IsPlacementOperator(EOperatorCode operatorCode);
+
+	UFUNCTION(BlueprintCallable)
 	void StartPrepareUnit(UOperator* operatorData);
 
 	UFUNCTION(BlueprintCallable)
-	void SetPrepareUnitLocation(const FVector DestLocation);
+	void SetPrepareUnitLocation(FVector DestLocation, bool onTowerBlock = false);
 
 	UFUNCTION(BlueprintCallable)
-	void FinishPrepareUnitSetUp();
+	void FinishPrepareUnitSetUp(class ATowerBlock* towerBlock);
+
+	UFUNCTION(BlueprintCallable)
+	void AddPlacementOperator(EOperatorCode operatorCode);
+
+	UFUNCTION(BlueprintCallable)
+	void RemovePlacementOperator(EOperatorCode operatorCode);
 };

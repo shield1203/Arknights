@@ -1,5 +1,6 @@
 #include "OperationSpectator.h"
 #include "PlacementUnitActor.h"
+#include "TowerBlock.h"
 
 AOperationSpectator::AOperationSpectator()
 {
@@ -7,11 +8,11 @@ AOperationSpectator::AOperationSpectator()
 
 bool AOperationSpectator::IsSelectedOperator(EOperatorCode operatorCode) const
 {
-	if (m_selectedOperatorButton && m_selectedOperator == operatorCode) return true;
+	if (m_selectedOperatorButton && m_selectedOperatorCode == operatorCode) return true;
 	return false;
 }
 
-void AOperationSpectator::SetSelectOperator(EOperatorCode operatorCode)
+void AOperationSpectator::SetSelectOperator(EOperatorCode operatorCode, EOperatorClass operatorClass)
 {
 	if (IsSelectedOperator(operatorCode))
 	{
@@ -20,8 +21,19 @@ void AOperationSpectator::SetSelectOperator(EOperatorCode operatorCode)
 	else
 	{
 		m_selectedOperatorButton = true;
-		m_selectedOperator = operatorCode;
+		m_selectedOperatorCode = operatorCode;
+		m_selectedOperatorClass = operatorClass;
 	}
+}
+
+EOperatorClass AOperationSpectator::GetSelectedOperatorClass()
+{
+	return m_selectedOperatorClass;
+}
+
+bool AOperationSpectator::IsSelectedOperatorButton() const
+{
+	return m_selectedOperatorButton;
 }
 
 bool AOperationSpectator::IsPrepareUnitSetUp() const
@@ -29,8 +41,15 @@ bool AOperationSpectator::IsPrepareUnitSetUp() const
 	return m_prepareUnitSetUp;
 }
 
+bool AOperationSpectator::IsPlacementOperator(EOperatorCode operatorCode)
+{
+	return m_placementOperators.Contains(operatorCode);
+}
+
 void AOperationSpectator::StartPrepareUnit(UOperator* operatorData)
 {
+	if (m_placementUnitActor != nullptr) return;
+
 	m_prepareUnitSetUp = true;
 	
 	UWorld* World = GetWorld();
@@ -39,26 +58,45 @@ void AOperationSpectator::StartPrepareUnit(UOperator* operatorData)
 		FActorSpawnParameters SpawnParams;
 		SpawnParams.Owner = this;
 
-		m_placementUnit = World->SpawnActor<APlacementUnitActor>(FVector(), FRotator(), SpawnParams);
+		m_placementUnitActor = World->SpawnActor<APlacementUnitActor>(FVector(), FRotator(0, 0, 0), SpawnParams);
 
-		if (m_placementUnit)
+		if (m_placementUnitActor)
 		{
-			m_placementUnit->Initialize(m_selectedOperator);
+			m_placementUnitActor->Initialize(operatorData);
 		}
 	}
 }
 
-void AOperationSpectator::SetPrepareUnitLocation(const FVector DestLocation)
+void AOperationSpectator::SetPrepareUnitLocation(FVector DestLocation, bool onTowerBlock)
 {
-	if (m_placementUnit == nullptr) return;
+	if (m_placementUnitActor == nullptr) return;
 
-	m_placementUnit->SetActorLocation(DestLocation);
+	m_placementUnitActor->SetUnitLocation(DestLocation, onTowerBlock);
 }
 
-void AOperationSpectator::FinishPrepareUnitSetUp()
+void AOperationSpectator::FinishPrepareUnitSetUp(ATowerBlock* towerBlock)
 {
 	m_prepareUnitSetUp = false;
 
-	m_placementUnit->Destroy();
-	m_placementUnit = nullptr;
+	if (towerBlock != nullptr && towerBlock->CanPlacement(m_selectedOperatorClass))
+	{
+		towerBlock->StartPlacement(m_placementUnitActor->GetOperatorData());
+		m_placementOperators.Add(m_selectedOperatorCode);
+	}
+
+	if (m_placementUnitActor != nullptr)
+	{
+		m_placementUnitActor->Destroy();
+		m_placementUnitActor = nullptr;
+	}
+}
+
+void AOperationSpectator::AddPlacementOperator(EOperatorCode operatorCode)
+{
+	m_placementOperators.Add(operatorCode);
+}
+
+void AOperationSpectator::RemovePlacementOperator(EOperatorCode operatorCode)
+{
+	m_placementOperators.Remove(operatorCode);
 }
