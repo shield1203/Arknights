@@ -32,9 +32,9 @@ ATowerBlock::ATowerBlock()
 	}
 
 	m_HPBarComponent->SetWidgetSpace(EWidgetSpace::World);
-	m_HPBarComponent->SetDrawSize(FVector2D(80.0f, 5.0f));
-	m_HPBarComponent->SetRelativeRotation(FRotator(90.0f, 0.0f, 0.0f));
-	m_HPBarComponent->SetRelativeLocation(FVector(-45.0f, 0.0f, 51.0f));
+	m_HPBarComponent->SetDrawSize(FVector2D(80.0f, 4.0f));
+	m_HPBarComponent->SetRelativeRotation(FRotator(90.0f, 0.0f, 180.0f));
+	m_HPBarComponent->SetRelativeLocation(FVector(-40.0f, 0.0f, 51.0f));
 	m_HPBarComponent->SetVisibility(false);
 	m_HPBarComponent->RegisterComponent();
 }
@@ -64,7 +64,7 @@ void ATowerBlock::Tick(float DeltaTime)
 	}
 	else
 	{
-		m_HPBarComponent->SetVisibility(false);
+		m_HPBarComponent->SetVisibility(true);
 	}
 }
 

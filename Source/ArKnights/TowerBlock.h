@@ -27,7 +27,7 @@ protected:
 	UPROPERTY()
 	class UOperatorComponent* m_operatorComponent;
 
-	UPROPERTY()
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UWidgetComponent* m_HPBarComponent;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
