@@ -41,6 +41,8 @@ protected:
 public:
 	AOperationGameMode();
 
+	virtual void Tick(float DeltaTime) override;
+
 	UFUNCTION(BlueprintCallable)
 	int32 GetCurCost() const;
 

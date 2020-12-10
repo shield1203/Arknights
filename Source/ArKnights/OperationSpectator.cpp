@@ -62,6 +62,7 @@ void AOperationSpectator::StartPrepareUnit(UOperator* operatorData)
 
 		if (m_placementUnitActor)
 		{
+
 			m_placementUnitActor->Initialize(operatorData);
 		}
 	}
