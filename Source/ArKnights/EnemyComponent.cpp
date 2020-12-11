@@ -27,5 +27,5 @@ void UEnemyComponent::Init()
 	}
 
 
-	SetFlipbook(m_flipbooks[0]);
+	SetFlipbook(m_flipbooks[2]);
 }

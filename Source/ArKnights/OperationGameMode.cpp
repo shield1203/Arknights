@@ -14,7 +14,7 @@ AOperationGameMode::AOperationGameMode()
 	SpectatorClass = AOperationSpectator::StaticClass();
 	DefaultPawnClass = AOperationSpectator::StaticClass();
 
-	static ConstructorHelpers::FClassFinder<UUserWidget> OperationWidget(TEXT("/Game/Widget/Operation/WB_Operation"));
+	static ConstructorHelpers::FClassFinder<UUserWidget> OperationWidget(TEXT("/Game/Widget/Operation/WB_Loading"));
 	if (OperationWidget.Succeeded())
 	{
 		m_mainWidget = CreateWidget(GetWorld(), OperationWidget.Class);
@@ -49,20 +49,7 @@ float AOperationGameMode::GetCostGauge() const
 
 void AOperationGameMode::AddCost(int32 value)
 {
-	m_curCost += value;
-
-	if (m_curCost == 5 || m_curCost == 10 || m_curCost == 6)
-	{
-		UWorld* World = GetWorld();
-		if (World)
-		{
-			FActorSpawnParameters SpawnParams;
-			SpawnParams.Owner = this;
-
-			World->SpawnActor<ATestActor>(FVector(), FRotator(0, 0, 0), SpawnParams);
-		}
-	}
-	
+	m_curCost += value;	
 
 	m_curCost = (m_curCost > 99) ? 99 : m_curCost;
 }
