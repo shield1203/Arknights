@@ -5,7 +5,9 @@
 #include "Operator.h"
 #include "OperationGameMode.generated.h"
 
+class UArKnightsGameInstance;
 class UOperationManager;
+class UOperatorManager;
 
 UCLASS()
 class ARKNIGHTS_API AOperationGameMode : public AArKnightsGameModeBase
@@ -13,7 +15,11 @@ class ARKNIGHTS_API AOperationGameMode : public AArKnightsGameModeBase
 	GENERATED_BODY()
 	
 private:
+	UArKnightsGameInstance* m_gameInstance;
+
 	UOperationManager* m_operationManager;
+
+	UOperatorManager* m_operatorManager;
 
 	FTimerHandle m_costTimerHandle;
 
@@ -42,6 +48,9 @@ public:
 	AOperationGameMode();
 
 	virtual void Tick(float DeltaTime) override;
+
+	UFUNCTION(BlueprintCallable)
+	void PreLoadFlipbookData();
 
 	UFUNCTION(BlueprintCallable)
 	int32 GetCurCost() const;

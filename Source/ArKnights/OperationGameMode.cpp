@@ -1,12 +1,15 @@
 #include "OperationGameMode.h"
 #include "ArKnightsGameInstance.h"
+#include "Operator.h"
 #include "OperationManager.h"
+#include "OperatorManager.h"
 #include "OperationController.h"
 #include "OperationSpectator.h"
+#include "OperatorComponent.h"
 #include "Blueprint/UserWidget.h"
 #include "UObject/ConstructorHelpers.h"
 #include "TimerManager.h"
-#include "TestActor.h"
+#include "PaperFlipbook.h"
 
 AOperationGameMode::AOperationGameMode()
 {
@@ -25,13 +28,38 @@ void AOperationGameMode::Tick(float DeltaTime)
 {
 }
 
+void AOperationGameMode::PreLoadFlipbookData()
+{
+	TArray<EOperatorCode>OperationMember;
+	for (auto member : m_operatorManager->GetOperationMember())
+	{
+		OperationMember.Add(member->GetOperatorCode());
+	}
+
+	for (int32 i = 0; i < m_gameInstance->GetDataTable(EGameDataTable::OperatorFlipbookData)->GetRowNames().Num(); i++)
+	{
+		FOperatorFlipbookData* pFlipbookData = m_gameInstance->GetDataTable(EGameDataTable::OperatorFlipbookData)->FindRow<FOperatorFlipbookData>(FName(*(FString::FormatAsNumber(i))), FString(""));
+		if (OperationMember.Contains(pFlipbookData->OperatorCode))
+		{
+			LoadObject<UPaperFlipbook>(this, *pFlipbookData->Path);
+		}
+	}
+}
+
 void AOperationGameMode::StartPlay()
 {
 	Super::StartPlay();
 
 	UWorld* pWorld = GetWorld();
-	UArKnightsGameInstance* pGameInstance = pWorld ? pWorld->GetGameInstance<UArKnightsGameInstance>() : nullptr;
-	m_operationManager = pGameInstance->GetOperationManager();
+	m_gameInstance = pWorld ? pWorld->GetGameInstance<UArKnightsGameInstance>() : nullptr;
+	if (!m_gameInstance)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("GameInstance nullptr"));
+		return;
+	}
+
+	m_operationManager = m_gameInstance->GetOperationManager();
+	m_operatorManager = m_gameInstance->GetOperatorManager();
 
 	SetMainWidget();
 	GetWorldTimerManager().SetTimer(m_costTimerHandle, this, &AOperationGameMode::AddCostGauge, 0.02, true);
