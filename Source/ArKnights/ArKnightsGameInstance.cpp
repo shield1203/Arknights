@@ -9,6 +9,7 @@
 #include "UserDataManager.h"
 #include "WidgetManager.h"
 #include "OperationManager.h"
+#include "EnemyManager.h"
 //#include "UObject/ConstructorHelpers.h"
 
 UArKnightsGameInstance::UArKnightsGameInstance()
@@ -21,6 +22,8 @@ UArKnightsGameInstance::UArKnightsGameInstance()
 	DataTablePath.Add(data_table_keys::operatorExp);
 	DataTablePath.Add(data_table_keys::operatorFlipbook);
 	DataTablePath.Add(data_table_keys::operatorRange);
+	DataTablePath.Add(data_table_keys::enemy);
+	DataTablePath.Add(data_table_keys::enemyFlipbook);
 
 	for (FString path : DataTablePath)
 	{
@@ -38,6 +41,7 @@ UArKnightsGameInstance::UArKnightsGameInstance()
 	m_userDataManager = CreateDefaultSubobject<UUserDataManager>(TEXT("GameInstance_UserDataManager"));
 	m_widgetManager = CreateDefaultSubobject<UWidgetManager>(TEXT("GameInstance_WidgetManager"));
 	m_operationManager = CreateDefaultSubobject<UOperationManager>(TEXT("GameInstance_OperationManager"));
+	m_enemyManager = CreateDefaultSubobject<UEnemyManager>(TEXT("GameInstance_EnemyManager"));
 }
 
 FString UArKnightsGameInstance::GetMyId() const
@@ -80,4 +84,9 @@ UWidgetManager* UArKnightsGameInstance::GetWidgetManager() const
 UOperationManager* UArKnightsGameInstance::GetOperationManager() const
 {
 	return m_operationManager;
+}
+
+UEnemyManager* UArKnightsGameInstance::GetEnemyManager() const
+{
+	return m_enemyManager;
 }

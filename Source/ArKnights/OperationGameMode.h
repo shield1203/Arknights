@@ -6,6 +6,7 @@
 #include "OperationGameMode.generated.h"
 
 class UArKnightsGameInstance;
+class UEnemyManager;
 class UOperationManager;
 class UOperatorManager;
 
@@ -17,11 +18,15 @@ class ARKNIGHTS_API AOperationGameMode : public AArKnightsGameModeBase
 private:
 	UArKnightsGameInstance* m_gameInstance;
 
+	UEnemyManager* m_enemyManager;
+
 	UOperationManager* m_operationManager;
 
 	UOperatorManager* m_operatorManager;
 
 	FTimerHandle m_costTimerHandle;
+
+	FTimerHandle m_enemySpawnTimerHandle;
 
 	UPROPERTY()
 	int32 m_dieEnemyCount = 0;
@@ -66,4 +71,7 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void AddDieEnemyCount();
+
+	UFUNCTION(BlueprintCallable)
+	void CheckEnemySpawn();
 };

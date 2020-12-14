@@ -18,6 +18,8 @@ namespace data_table_keys
 	TCHAR const* const operatorExp = TEXT("/Game/DataTable/OperatorExp");
 	TCHAR const* const operatorFlipbook = TEXT("/Game/DataTable/OperatorFlipbookData");
 	TCHAR const* const operatorRange = TEXT("/Game/DataTable/OperatorRange");
+	TCHAR const* const enemy = TEXT("/Game/DataTable/Enemy");
+	TCHAR const* const enemyFlipbook = TEXT("/Game/DataTable/EnemyFlipbookData");
 }
 
 namespace shop_menu_keys

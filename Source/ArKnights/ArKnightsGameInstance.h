@@ -10,6 +10,7 @@ class UShopManager;
 class UUserDataManager;
 class UWidgetManager;
 class UOperationManager;
+class UEnemyManager;
 
 UENUM(BlueprintType)
 enum class EGameDataTable : uint8
@@ -21,6 +22,8 @@ enum class EGameDataTable : uint8
 	OperatorExpData UMETA(DisplayName = "DT_OperatorExpData"),
 	OperatorFlipbookData UMETA(DisplayName = "DT_OperatorFlipbookData"),
 	OperatorRangeData UMETA(DisplayName = "DT_OperatorRangeData"),
+	EnemyData UMETA(DisplayName = "DT_EnemyData"),
+	EnemyFlipbookData UMETA(DisplayName = "DT_EnemyFlipbookData"),
 };
 
 UCLASS(BlueprintType)
@@ -50,6 +53,9 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Manager")
 	UOperationManager* m_operationManager;
 
+	UPROPERTY(EditAnywhere, Category = "Manager")
+	UEnemyManager* m_enemyManager;
+
 public:
 	UArKnightsGameInstance();
 
@@ -76,4 +82,7 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	UOperationManager* GetOperationManager() const;
+
+	UFUNCTION(BlueprintCallable)
+	UEnemyManager* GetEnemyManager() const;
 };

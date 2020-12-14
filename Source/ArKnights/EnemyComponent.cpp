@@ -2,10 +2,12 @@
 #include "ArKnightsGameInstance.h"
 #include "PaperFlipbook.h"
 #include "PaperFlipbookComponent.h"
-#include "Engine/DataTable.h"
-#include "OperatorComponent.h"
 
-void UEnemyComponent::Init()
+UEnemyComponent::UEnemyComponent()
+{
+}
+
+void UEnemyComponent::LoadFlipbookData(EEnemyCode enemyCode)\
 {
 	UWorld* pWorld = GetWorld();
 	UArKnightsGameInstance* pGameInstance = pWorld ? pWorld->GetGameInstance<UArKnightsGameInstance>() : nullptr;
@@ -16,16 +18,40 @@ void UEnemyComponent::Init()
 		return;
 	}
 
-	for (int32 i = 0; i < pGameInstance->GetDataTable(EGameDataTable::OperatorFlipbookData)->GetRowNames().Num(); i++)
+	for (int32 i = 0; i < pGameInstance->GetDataTable(EGameDataTable::EnemyFlipbookData)->GetRowNames().Num(); i++)
 	{
-		FOperatorFlipbookData* pFlipbookData = pGameInstance->GetDataTable(EGameDataTable::OperatorFlipbookData)->FindRow<FOperatorFlipbookData>(FName(*(FString::FormatAsNumber(i))), FString(""));
-		if (EOperatorCode::Hoshiguma == pFlipbookData->OperatorCode)
+		FEnemyFlipbookData* pFlipbookData = pGameInstance->GetDataTable(EGameDataTable::EnemyFlipbookData)->FindRow<FEnemyFlipbookData>(FName(*(FString::FormatAsNumber(i))), FString(""));
+		if (enemyCode == pFlipbookData->EnemyCode)
 		{
-			UPaperFlipbook* newFlipbook = LoadObject<UPaperFlipbook>(this, *pFlipbookData->Path);
-			m_flipbooks.Add(newFlipbook);
+			m_flipbooks.Add(pFlipbookData->FlipbookState);
+			m_flipbooks[pFlipbookData->FlipbookState].frame = pFlipbookData->Frame;
+			m_flipbooks[pFlipbookData->FlipbookState].X = pFlipbookData->X;
+			m_flipbooks[pFlipbookData->FlipbookState].Y = pFlipbookData->Y;
+			m_flipbooks[pFlipbookData->FlipbookState].Z = pFlipbookData->Z;
+			m_flipbooks[pFlipbookData->FlipbookState].Flipbook = LoadObject<UPaperFlipbook>(this, *pFlipbookData->Path);
 		}
 	}
 
+	SetFlipbook(m_flipbooks[EEnemyUnitFlipbook::Idle].Flipbook);
+}
 
-	SetFlipbook(m_flipbooks[2]);
+void UEnemyComponent::SetFlipbookState(EEnemyUnitFlipbook unitState)
+{
+	if (m_curState == unitState) return;
+	
+	m_curState = unitState;
+
+	SetFlipbook(m_flipbooks[m_curState].Flipbook);
+}
+
+void UEnemyComponent::SetComponentTransform()
+{
+	FVector flipbookScale = FVector(0.35f);
+	SetRelativeScale3D(flipbookScale);
+
+	FRotator fliopbookRotation = FRotator(0, 270.0f, 80.0f);
+	SetRelativeRotation(fliopbookRotation);
+
+	FVector flipbookLocation = FVector(m_flipbooks[m_curState].X, -m_flipbooks[m_curState].Y, m_flipbooks[m_curState].Z);
+	SetRelativeLocation(flipbookLocation);
 }

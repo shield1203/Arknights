@@ -66,8 +66,20 @@ protected:
 	UPROPERTY()
 	EUnitForm m_form;
 
+	FTimerHandle m_changeAlphaTimerHandle;
+
+	float m_preAlphaValue;
+
+	float m_nextAlphaValue;
+
 public:
 	UUnitComponent();
 
 	virtual void UpdateAnimation() {};
+
+	void FadeIn();
+
+	void FadeOut();
+
+	void ChangeAlphaValue();
 };

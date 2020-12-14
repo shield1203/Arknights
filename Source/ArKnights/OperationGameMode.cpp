@@ -10,12 +10,19 @@
 #include "UObject/ConstructorHelpers.h"
 #include "TimerManager.h"
 #include "PaperFlipbook.h"
+#include "Enemy.h"
+#include "EnemyComponent.h"
+#include "EnemyManager.h"
 
 AOperationGameMode::AOperationGameMode()
 {
+	PrimaryActorTick.bCanEverTick = true;
+
 	PlayerControllerClass = AOperationController::StaticClass();
 	SpectatorClass = AOperationSpectator::StaticClass();
 	DefaultPawnClass = AOperationSpectator::StaticClass();
+
+	//m_enemyManager = CreateDefaultSubobject<UEnemyManager>(TEXT("Operation_EnemyManager"));
 
 	static ConstructorHelpers::FClassFinder<UUserWidget> OperationWidget(TEXT("/Game/Widget/Operation/WB_Loading"));
 	if (OperationWidget.Succeeded())
@@ -44,6 +51,16 @@ void AOperationGameMode::PreLoadFlipbookData()
 			LoadObject<UPaperFlipbook>(this, *pFlipbookData->Path);
 		}
 	}
+
+	TArray<EEnemyCode>OperationEnemy = m_enemyManager->GetOperationEnemy(m_operationManager->GetCurEpisode(), m_operationManager->GetCurChapter());
+	for (int32 i = 0; i < m_gameInstance->GetDataTable(EGameDataTable::EnemyFlipbookData)->GetRowNames().Num(); i++)
+	{
+		FEnemyFlipbookData* pFlipbookData = m_gameInstance->GetDataTable(EGameDataTable::EnemyFlipbookData)->FindRow<FEnemyFlipbookData>(FName(*(FString::FormatAsNumber(i))), FString(""));
+		if (OperationEnemy.Contains(pFlipbookData->EnemyCode))
+		{
+			LoadObject<UPaperFlipbook>(this, *pFlipbookData->Path);
+		}
+	}
 }
 
 void AOperationGameMode::StartPlay()
@@ -60,9 +77,13 @@ void AOperationGameMode::StartPlay()
 
 	m_operationManager = m_gameInstance->GetOperationManager();
 	m_operatorManager = m_gameInstance->GetOperatorManager();
+	m_enemyManager = m_gameInstance->GetEnemyManager();
 
+	m_enemyManager->LoadOperationEnemyData(m_operationManager->GetCurEpisode(), m_operationManager->GetCurChapter());
+	
 	SetMainWidget();
 	GetWorldTimerManager().SetTimer(m_costTimerHandle, this, &AOperationGameMode::AddCostGauge, 0.02, true);
+	GetWorldTimerManager().SetTimer(m_enemySpawnTimerHandle, this, &AOperationGameMode::CheckEnemySpawn, 0.1, true);
 }
 
 int32 AOperationGameMode::GetCurCost() const
@@ -86,7 +107,7 @@ void AOperationGameMode::AddCostGauge()
 {
 	if (m_curCost >= 99) return;
 
-	m_costGauge += 0.02;
+	m_costGauge += 0.02f;
 
 	if (m_costGauge >= 1)
 	{
@@ -98,4 +119,9 @@ void AOperationGameMode::AddCostGauge()
 void AOperationGameMode::AddDieEnemyCount()
 {
 	m_dieEnemyCount += 1;
+}
+
+void AOperationGameMode::CheckEnemySpawn()
+{
+	m_enemyManager->CheckEnemySpawnTime(0.1f);
 }
