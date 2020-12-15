@@ -1,5 +1,6 @@
 #include "UnitComponent.h"
 #include "TimerManager.h"
+#include "PaperFlipbook.h"
 
 UUnitComponent::UUnitComponent()
 {
@@ -11,28 +12,36 @@ UUnitComponent::UUnitComponent()
 	{
 		SetMaterial(0, SpriteMaterial.Object);
 	}
+
+	m_delegateChangeAlphaValue.BindDynamic(this, &UUnitComponent::ChangeAlphaValue);
 }
 
 void UUnitComponent::FadeIn()
 {
-	m_preAlphaValue = 0;
-	m_nextAlphaValue = 1;
-	//GetWorld()->GetTimerManager().SetTimer(m_changeAlphaTimerHandle, this, &UUnitComponent::ChangeAlphaValue, 0.02, true);
+	m_upValue = true;
+	m_color.A = 0.f;
+	GetWorld()->GetTimerManager().SetTimer(m_alphaTimerHandle, m_delegateChangeAlphaValue, 0.02, true);
 }
 
 void UUnitComponent::FadeOut()
 {
-
+	m_upValue = false;
+	m_color.A = 1.f;
+	GetWorld()->GetTimerManager().SetTimer(m_alphaTimerHandle, m_delegateChangeAlphaValue, 0.02, true);
 }
 
 void UUnitComponent::ChangeAlphaValue()
-{
-	FVector defaultColor = FVector(1.f);
+{	
+	float fAlpha = m_color.A;
 
-	m_preAlphaValue += 0.02f;
+	m_upValue ? fAlpha += 0.02f : fAlpha -= 0.02f;
 
-	if (m_preAlphaValue == m_nextAlphaValue)
+	m_color.A = fAlpha;
+
+	SetSpriteColor(m_color);
+
+	if (fAlpha <= 0 || fAlpha >= 1)
 	{
-
+		GetWorld()->GetTimerManager().ClearTimer(m_alphaTimerHandle);
 	}
 }

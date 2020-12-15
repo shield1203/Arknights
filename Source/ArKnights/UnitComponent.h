@@ -66,11 +66,16 @@ protected:
 	UPROPERTY()
 	EUnitForm m_form;
 
-	FTimerHandle m_changeAlphaTimerHandle;
+	UPROPERTY()
+	bool m_upValue;
 
-	float m_preAlphaValue;
+	UPROPERTY()
+	FLinearColor m_color;
 
-	float m_nextAlphaValue;
+protected:
+	FTimerHandle m_alphaTimerHandle;
+
+	FTimerDynamicDelegate m_delegateChangeAlphaValue;
 
 public:
 	UUnitComponent();
@@ -82,4 +87,10 @@ public:
 	void FadeOut();
 
 	void ChangeAlphaValue();
+
+	/*void Blackin();
+
+	void Blackout();*/
+
+	//void Takedamage();
 };

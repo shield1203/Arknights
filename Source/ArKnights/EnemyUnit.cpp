@@ -33,8 +33,6 @@ void AEnemyUnit::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	UE_LOG(LogTemp, Warning, TEXT("%s"), *GetActorLabel());
-
 	if (!m_holding)
 	{
 		MoveToLocation();
@@ -75,12 +73,22 @@ void AEnemyUnit::MoveToLocation()
 		{
 			nextLocation.X += m_enemyData->GetSpeed();
 			nextLocation.Y += m_enemyData->GetSpeed();
-			UE_LOG(LogTemp, Warning, TEXT("Cos, Sin : 0!!!"), fTheta);
 		}
 
 		UE_LOG(LogTemp, Warning, TEXT("Theta : %f"), fTheta);
 		UE_LOG(LogTemp, Warning, TEXT("X : %f, Y : %f"), nextLocation.X, nextLocation.Y);
-		UE_LOG(LogTemp, Warning, TEXT("Cos : %f, Sin : %f"), (FMath::Cos(fTheta) * m_enemyData->GetSpeed()), (FMath::Sin(fTheta) * m_enemyData->GetSpeed()));
+		UE_LOG(LogTemp, Warning, TEXT("Cos : %f, Sin : %f"), (FMath::Cos(fTheta)), (FMath::Sin(fTheta)));
+
+		if (m_enemyData->GetSpeed() == 0)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Speed : %f"), m_enemyData->GetSpeed());
+			UE_LOG(LogTemp, Warning, TEXT("MaxHP : %f"), m_enemyData->GetMaxHP());
+
+			if (m_enemyData == nullptr)
+			{
+				UE_LOG(LogTemp, Warning, TEXT("null!!!"));
+			}
+		}
 	}
 
 	m_enemyComponent->SetComponentTransform();
