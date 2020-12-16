@@ -12,6 +12,8 @@ AEnemyUnit::AEnemyUnit()
 
 	m_enemyComponent = CreateDefaultSubobject<UEnemyComponent>(TEXT("EnemyComponent"));
 	m_enemyComponent->SetupAttachment(RootComponent);
+
+	m_enemyData = CreateDefaultSubobject<UEnemy>(TEXT("EnemyUnitData"));
 }
 
 void AEnemyUnit::BeginPlay()
@@ -21,12 +23,13 @@ void AEnemyUnit::BeginPlay()
 
 void AEnemyUnit::Initialize(EEnemyCode enemyCode, TArray<float>DestinationXPos, TArray<float>DestinationYPos, TArray<float>HoldingTime)
 {
-	m_enemyData = NewObject<UEnemy>(this, UEnemy::StaticClass());
 	m_enemyData->Initialize(enemyCode);
 	m_enemyComponent->LoadFlipbookData(enemyCode);
 	m_destinationXPos = DestinationXPos;
 	m_destinationYPos = DestinationYPos;
 	m_holdingTime = HoldingTime;
+
+	m_enemyComponent->FadeIn(true);
 }
 
 void AEnemyUnit::Tick(float DeltaTime)
@@ -78,16 +81,12 @@ void AEnemyUnit::MoveToLocation()
 		UE_LOG(LogTemp, Warning, TEXT("Theta : %f"), fTheta);
 		UE_LOG(LogTemp, Warning, TEXT("X : %f, Y : %f"), nextLocation.X, nextLocation.Y);
 		UE_LOG(LogTemp, Warning, TEXT("Cos : %f, Sin : %f"), (FMath::Cos(fTheta)), (FMath::Sin(fTheta)));
+		UE_LOG(LogTemp, Warning, TEXT("XSpeed : %f, YSpeed : %f"), (FMath::Cos(fTheta) * m_enemyData->GetSpeed()), (FMath::Sin(fTheta) * m_enemyData->GetSpeed()));
 
 		if (m_enemyData->GetSpeed() == 0)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("Speed : %f"), m_enemyData->GetSpeed());
-			UE_LOG(LogTemp, Warning, TEXT("MaxHP : %f"), m_enemyData->GetMaxHP());
-
-			if (m_enemyData == nullptr)
-			{
-				UE_LOG(LogTemp, Warning, TEXT("null!!!"));
-			}
+			/*UE_LOG(LogTemp, Warning, TEXT("Speed : %f"), m_enemyData->GetSpeed());
+			UE_LOG(LogTemp, Warning, TEXT("MaxHP : %f"), m_enemyData->GetMaxHP());*/
 		}
 	}
 

@@ -82,10 +82,9 @@ public:
 
 	virtual void UpdateAnimation() {};
 
-	void FadeIn();
+	void FadeIn(bool upAlphaValue);
 
-	void FadeOut();
-
+	UFUNCTION()
 	void ChangeAlphaValue();
 
 	/*void Blackin();
