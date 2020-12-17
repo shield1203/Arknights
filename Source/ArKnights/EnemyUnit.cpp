@@ -12,6 +12,7 @@ AEnemyUnit::AEnemyUnit()
 
 	m_enemyComponent = CreateDefaultSubobject<UEnemyComponent>(TEXT("EnemyComponent"));
 	m_enemyComponent->SetupAttachment(RootComponent);
+	//m_enemyComponent->OnActorDestroy.BindUFunction(this, FName("UnitDestroy"));
 
 	m_enemyData = CreateDefaultSubobject<UEnemy>(TEXT("EnemyUnitData"));
 }
@@ -30,6 +31,7 @@ void AEnemyUnit::Initialize(EEnemyCode enemyCode, TArray<float>DestinationXPos, 
 	m_holdingTime = HoldingTime;
 
 	m_enemyComponent->FadeIn(true);
+	m_enemyComponent->BlackIn(false);
 }
 
 void AEnemyUnit::Tick(float DeltaTime)
@@ -78,10 +80,10 @@ void AEnemyUnit::MoveToLocation()
 			nextLocation.Y += m_enemyData->GetSpeed();
 		}
 
-		UE_LOG(LogTemp, Warning, TEXT("Theta : %f"), fTheta);
+		/*UE_LOG(LogTemp, Warning, TEXT("Theta : %f"), fTheta);
 		UE_LOG(LogTemp, Warning, TEXT("X : %f, Y : %f"), nextLocation.X, nextLocation.Y);
 		UE_LOG(LogTemp, Warning, TEXT("Cos : %f, Sin : %f"), (FMath::Cos(fTheta)), (FMath::Sin(fTheta)));
-		UE_LOG(LogTemp, Warning, TEXT("XSpeed : %f, YSpeed : %f"), (FMath::Cos(fTheta) * m_enemyData->GetSpeed()), (FMath::Sin(fTheta) * m_enemyData->GetSpeed()));
+		UE_LOG(LogTemp, Warning, TEXT("XSpeed : %f, YSpeed : %f"), (FMath::Cos(fTheta) * m_enemyData->GetSpeed()), (FMath::Sin(fTheta) * m_enemyData->GetSpeed()));*/
 
 		if (m_enemyData->GetSpeed() == 0)
 		{
@@ -116,7 +118,10 @@ void AEnemyUnit::CheckDestination()
 
 	if (m_destinationXPos.Num() <= m_destinationIndex)
 	{
-		Destroy();
+		m_enemyComponent->FadeIn(false);
+		m_enemyComponent->BlackIn(true);
+		//Destroy();
+		m_holding = true;
 	}
 }
 

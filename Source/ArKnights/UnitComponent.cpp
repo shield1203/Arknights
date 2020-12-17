@@ -23,12 +23,13 @@ UUnitComponent::UUnitComponent()
 	}
 
 	m_delegateChangeAlphaValue.BindDynamic(this, &UUnitComponent::ChangeAlphaValue);
+	m_delegateChangeBlackValue.BindDynamic(this, &UUnitComponent::ChangeBlackValue);
 }
 
 void UUnitComponent::FadeIn(bool upAlphaValue)
 {
-	m_upValue = upAlphaValue;
-	m_color.A = m_upValue ? 0.f : 1.f;
+	m_upAlphaValue = upAlphaValue;
+	m_color.A = m_upAlphaValue ? 0.f : 1.f;
 	
 	GetWorld()->GetTimerManager().SetTimer(m_alphaTimerHandle, m_delegateChangeAlphaValue, 0.02, true);
 }
@@ -37,7 +38,7 @@ void UUnitComponent::ChangeAlphaValue()
 {	
 	float fAlpha = m_color.A;
 
-	m_upValue ? fAlpha += 0.02f : fAlpha -= 0.02f;
+	m_upAlphaValue ? fAlpha += 0.02f : fAlpha -= 0.02f;
 
 	m_color.A = fAlpha;
 
@@ -46,5 +47,39 @@ void UUnitComponent::ChangeAlphaValue()
 	if (fAlpha <= 0 || fAlpha >= 1)
 	{
 		GetWorld()->GetTimerManager().ClearTimer(m_alphaTimerHandle);
+		if (fAlpha <= 0)
+		{
+			GetOwner()->Destroy();
+		}
 	}
+}
+
+void UUnitComponent::BlackIn(bool upBlackValue)
+{
+	m_upBlackValue = upBlackValue;
+	m_color.R = m_upBlackValue ? 1.f : 0.f;
+	m_color.G = m_upBlackValue ? 1.f : 0.f;
+	m_color.B = m_upBlackValue ? 1.f : 0.f;
+
+	GetWorld()->GetTimerManager().SetTimer(m_blackTimerHandle, m_delegateChangeBlackValue, 0.04, true);
+}
+
+void UUnitComponent::ChangeBlackValue()
+{
+	float fColor = m_color.R;
+
+	m_upBlackValue ? fColor -= 0.1f : fColor += 0.02f;
+
+	m_color.R = fColor;
+	m_color.G = fColor;
+	m_color.B = fColor;
+
+	SetSpriteColor(m_color);
+
+	if (fColor <= 0 || fColor >= 1)
+	{
+		GetWorld()->GetTimerManager().ClearTimer(m_blackTimerHandle);
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("%s"), *m_color.ToString());
 }

@@ -17,6 +17,7 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UEnemyComponent* m_enemyComponent;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UEnemy* m_enemyData;
 
 	FTimerHandle m_holdingTimerHandle;

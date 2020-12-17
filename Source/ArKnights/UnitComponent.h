@@ -67,7 +67,10 @@ protected:
 	EUnitForm m_form;
 
 	UPROPERTY()
-	bool m_upValue;
+	bool m_upAlphaValue;
+
+	UPROPERTY()
+	bool m_upBlackValue;
 
 	UPROPERTY()
 	FLinearColor m_color;
@@ -76,6 +79,10 @@ protected:
 	FTimerHandle m_alphaTimerHandle;
 
 	FTimerDynamicDelegate m_delegateChangeAlphaValue;
+
+	FTimerHandle m_blackTimerHandle;
+
+	FTimerDynamicDelegate m_delegateChangeBlackValue;
 
 public:
 	UUnitComponent();
@@ -87,9 +94,10 @@ public:
 	UFUNCTION()
 	void ChangeAlphaValue();
 
-	/*void Blackin();
+	void BlackIn(bool upBlackValue);
 
-	void Blackout();*/
+	UFUNCTION()
+	void ChangeBlackValue();
 
 	//void Takedamage();
 };
