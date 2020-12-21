@@ -100,6 +100,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FString MiniThumbnail;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FString WholeBody;
 };
 
 USTRUCT(BlueprintType)
@@ -164,6 +167,9 @@ protected:
 	UPROPERTY()
 	class UTexture2D* m_miniThumbnail;
 
+	UPROPERTY()
+	class UTexture2D* m_wholeBody;
+
 public:
 	UOperator();
 	
@@ -212,4 +218,7 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	class UTexture2D* GetMiniThumbnail() const;
+
+	UFUNCTION(BlueprintCallable)
+	class UTexture2D* GetWholeBody() const;
 };

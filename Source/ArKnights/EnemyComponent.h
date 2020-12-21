@@ -58,6 +58,10 @@ protected:
 public:
 	UEnemyComponent();
 
+	virtual void UpdateAnimation();
+
+	virtual void CheckFrameEvent();
+
 	void LoadFlipbookData(EEnemyCode enemyCode);
 
 	void SetFlipbookState(EEnemyUnitFlipbook unitState);

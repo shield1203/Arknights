@@ -19,7 +19,6 @@ UUnitComponent::UUnitComponent()
 	if (SpriteMaterial.Succeeded())
 	{
 		SetMaterial(0, SpriteMaterial.Object);
-		UE_LOG(LogTemp, Warning, TEXT("Material Translucent"));
 	}
 
 	m_delegateChangeAlphaValue.BindDynamic(this, &UUnitComponent::ChangeAlphaValue);
@@ -49,7 +48,7 @@ void UUnitComponent::ChangeAlphaValue()
 		GetWorld()->GetTimerManager().ClearTimer(m_alphaTimerHandle);
 		if (fAlpha <= 0)
 		{
-			GetOwner()->Destroy();
+			OnUnitDieCallback.ExecuteIfBound();
 		}
 	}
 }
@@ -80,6 +79,4 @@ void UUnitComponent::ChangeBlackValue()
 	{
 		GetWorld()->GetTimerManager().ClearTimer(m_blackTimerHandle);
 	}
-
-	UE_LOG(LogTemp, Warning, TEXT("%s"), *m_color.ToString());
 }

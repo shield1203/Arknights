@@ -23,5 +23,8 @@ public:
 	void SetMainWidget();
 
 	UFUNCTION(BlueprintCallable)
+	void SetSubWidget(UUserWidget* subWidget);
+
+	UFUNCTION(BlueprintCallable)
 	void AddToViewSubWidgets();
 };

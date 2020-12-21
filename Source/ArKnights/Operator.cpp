@@ -46,6 +46,7 @@ void UOperator::LoadOperatorData(EOperatorCode Operatorcode)
 	m_data.Block = pOperatorData->Block;
 	m_thumbnail = Cast<UTexture2D>(StaticLoadObject(UTexture2D::StaticClass(), nullptr, *(pOperatorData->Thumbnail)));
 	m_miniThumbnail = Cast<UTexture2D>(StaticLoadObject(UTexture2D::StaticClass(), nullptr, *(pOperatorData->MiniThumbnail)));
+	m_wholeBody = Cast<UTexture2D>(StaticLoadObject(UTexture2D::StaticClass(), nullptr, *(pOperatorData->WholeBody)));
 }
 
 EOperatorCode UOperator::GetOperatorCode() const
@@ -129,4 +130,9 @@ UTexture2D* UOperator::GetThumbnail() const
 UTexture2D* UOperator::GetMiniThumbnail() const
 {
 	return m_miniThumbnail;
+}
+
+UTexture2D* UOperator::GetWholeBody() const
+{
+	return m_wholeBody;
 }

@@ -27,6 +27,12 @@ protected:
 	UPROPERTY()
 	class UOperatorComponent* m_operatorComponent;
 
+	UPROPERTY()
+	TMap<class UDecalComponent*, FVector2D> m_attackRange;
+
+	UPROPERTY()
+	class UMaterialInterface* m_materialInstance;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UWidgetComponent* m_HPBarComponent;
 

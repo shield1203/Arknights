@@ -64,9 +64,15 @@ protected:
 public:
 	UOperatorComponent();
 
+	virtual void UpdateAnimation();
+
+	virtual void CheckFrameEvent();
+
 	void Start(EOperatorCode operatorCode);
 
 	void SetFlipbookTransform(float x, float y, float z);
+
+	void SetFlipbookState(EOperatorUnitFlipbook unitState);
 
 	void WithDraw();
 };

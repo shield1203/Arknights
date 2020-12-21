@@ -16,6 +16,8 @@ void UEnemyManager::LoadOperationEnemyData(int32 Episode, int32 Chapter)
 
 	if (pDataTable == nullptr) return;
 
+	m_spawnIndex = 0;
+	m_operationEnemyData.Empty();
 	m_operationEnemyData.SetNum(pDataTable->GetRowNames().Num());
 	for (int32 i = 0; i < pDataTable->GetRowNames().Num(); i++)
 	{
@@ -64,7 +66,7 @@ void UEnemyManager::CheckEnemySpawnTime(float deltaTime)
 	m_second += deltaTime;
 	if (m_operationEnemyData[m_spawnIndex].SpawnTime <= m_second)
 	{
-		m_second -= m_operationEnemyData[m_spawnIndex].SpawnTime;
+		m_second = 0;
 
 		for (const auto& entity : TActorRange<AEnemySpawnPlace>(GetWorld()))
 		{

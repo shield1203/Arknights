@@ -24,6 +24,21 @@ void AArKnightsGameModeBase::SetMainWidget()
 	pGameInstance->GetWidgetManager()->SetMainWidget(m_mainWidget);
 }
 
+void AArKnightsGameModeBase::SetSubWidget(UUserWidget* subWidget)
+{
+	UWorld* pWorld = GetWorld();
+
+	UArKnightsGameInstance* pGameInstance = pWorld ? pWorld->GetGameInstance<UArKnightsGameInstance>() : nullptr;
+
+	if (!pGameInstance)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("GameInstance nullptr"));
+		return;
+	}
+
+	pGameInstance->GetWidgetManager()->AddSubWidget(subWidget);
+}
+
 void AArKnightsGameModeBase::AddToViewSubWidgets()
 {
 	UWorld* pWorld = GetWorld();

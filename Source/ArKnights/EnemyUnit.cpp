@@ -2,6 +2,8 @@
 #include "Components/SceneComponent.h"
 #include "EnemyComponent.h"
 #include "TimerManager.h"
+#include "OperationGameMode.h"
+#include "Kismet/GameplayStatics.h"
 
 AEnemyUnit::AEnemyUnit()
 {
@@ -12,7 +14,7 @@ AEnemyUnit::AEnemyUnit()
 
 	m_enemyComponent = CreateDefaultSubobject<UEnemyComponent>(TEXT("EnemyComponent"));
 	m_enemyComponent->SetupAttachment(RootComponent);
-	//m_enemyComponent->OnActorDestroy.BindUFunction(this, FName("UnitDestroy"));
+	m_enemyComponent->OnUnitDieCallback.BindUFunction(this, FName("UnitDestroy"));
 
 	m_enemyData = CreateDefaultSubobject<UEnemy>(TEXT("EnemyUnitData"));
 }
@@ -25,6 +27,9 @@ void AEnemyUnit::BeginPlay()
 void AEnemyUnit::Initialize(EEnemyCode enemyCode, TArray<float>DestinationXPos, TArray<float>DestinationYPos, TArray<float>HoldingTime)
 {
 	m_enemyData->Initialize(enemyCode);
+	m_maxHP = m_enemyData->GetMaxHP();
+	m_curHP = m_maxHP;
+
 	m_enemyComponent->LoadFlipbookData(enemyCode);
 	m_destinationXPos = DestinationXPos;
 	m_destinationYPos = DestinationYPos;
@@ -118,14 +123,37 @@ void AEnemyUnit::CheckDestination()
 
 	if (m_destinationXPos.Num() <= m_destinationIndex)
 	{
-		m_enemyComponent->FadeIn(false);
-		m_enemyComponent->BlackIn(true);
-		//Destroy();
-		m_holding = true;
+		UnitDie();
 	}
 }
 
 void AEnemyUnit::CancelToHolding()
 {
 	m_holding = false;
+}
+
+void AEnemyUnit::UnitDie()
+{
+	m_enemyComponent->FadeIn(false);
+	m_enemyComponent->BlackIn(true);
+	m_holding = true;
+
+	UWorld* pWorld = GetWorld();
+	if (pWorld)
+	{
+		AOperationGameMode* GameMode = Cast<AOperationGameMode>(UGameplayStatics::GetGameMode(pWorld));
+		if (GameMode)
+		{
+			GameMode->AddRemoveEnemyCount();
+			if (m_curHP > 0)
+			{
+				GameMode->MinusLifePoint();
+			}
+		}
+	}
+}
+
+void AEnemyUnit::UnitDestroy()
+{
+	Destroy();
 }

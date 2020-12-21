@@ -1,5 +1,9 @@
 #include "TowerBlock.h"
 #include "Components/SceneComponent.h"
+#include "Components/DecalComponent.h"
+#include "Materials/Material.h"
+#include "Materials/MaterialInterface.h"
+#include "ArKnightsGameInstance.h"
 #include "Components/StaticMeshComponent.h"
 #include "Blueprint/UserWidget.h"
 #include "Components/WidgetComponent.h"
@@ -21,6 +25,11 @@ ATowerBlock::ATowerBlock()
 
 	m_operatorComponent = CreateDefaultSubobject<UOperatorComponent>(TEXT("TowerBlockOperatorComponent"));
 	m_operatorComponent->SetupAttachment(RootComponent);
+
+	static ConstructorHelpers::FObjectFinder<UMaterial>Material(TEXT("Material'/Game/Blueprint/MT_Range.MT_Range'"));
+	if (Material.Succeeded()) {
+		m_materialInstance = Material.Object;
+	}
 
 	m_HPBarComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("TowerBlockHPBarComponent"));
 	m_HPBarComponent->SetupAttachment(RootComponent);
@@ -61,6 +70,7 @@ void ATowerBlock::Tick(float DeltaTime)
 	if (m_operatorData)
 	{
 		m_HPBarComponent->SetVisibility(true);
+		m_operatorComponent->UpdateAnimation();
 	}
 	else
 	{

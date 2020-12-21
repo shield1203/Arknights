@@ -29,6 +29,12 @@ AOperationGameMode::AOperationGameMode()
 	{
 		m_mainWidget = CreateWidget(GetWorld(), OperationWidget.Class);
 	}
+
+	static ConstructorHelpers::FClassFinder<UUserWidget> OperationFailedWidget(TEXT("/Game/Widget/Operation/WB_MissionFailed"));
+	if (OperationFailedWidget.Succeeded())
+	{
+		m_missionFailedWidget = CreateWidget(GetWorld(), OperationFailedWidget.Class);
+	}
 }
 
 void AOperationGameMode::Tick(float DeltaTime)
@@ -69,6 +75,7 @@ void AOperationGameMode::StartPlay()
 
 	UWorld* pWorld = GetWorld();
 	m_gameInstance = pWorld ? pWorld->GetGameInstance<UArKnightsGameInstance>() : nullptr;
+
 	if (!m_gameInstance)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("GameInstance nullptr"));
@@ -79,6 +86,7 @@ void AOperationGameMode::StartPlay()
 	m_operatorManager = m_gameInstance->GetOperatorManager();
 	m_enemyManager = m_gameInstance->GetEnemyManager();
 
+	m_lifePoint = m_operationManager->GetOperationLifePoint();
 	m_enemyManager->LoadOperationEnemyData(m_operationManager->GetCurEpisode(), m_operationManager->GetCurChapter());
 	
 	SetMainWidget();
@@ -94,6 +102,26 @@ int32 AOperationGameMode::GetCurCost() const
 float AOperationGameMode::GetCostGauge() const
 {
 	return m_costGauge;
+}
+
+int32 AOperationGameMode::GetLifePoint() const
+{
+	return m_lifePoint;
+}
+
+int32 AOperationGameMode::GetRemoveEnemy() const
+{
+	return m_removeEnemyCount;
+}
+
+void AOperationGameMode::MinusLifePoint()
+{
+	m_lifePoint--;
+	if (m_lifePoint == 0)
+	{
+		SetSubWidget(m_missionFailedWidget);
+	}
+	UE_LOG(LogTemp, Warning, TEXT("lifePoint Minus"));
 }
 
 void AOperationGameMode::AddCost(int32 value)
@@ -116,9 +144,13 @@ void AOperationGameMode::AddCostGauge()
 	}
 }
 
-void AOperationGameMode::AddDieEnemyCount()
+void AOperationGameMode::AddRemoveEnemyCount()
 {
-	m_dieEnemyCount += 1;
+	m_removeEnemyCount++;
+	if (m_removeEnemyCount == m_operationManager->GetOperationEnemies())
+	{
+		// SetSubWidget(m_missionSuccessWidget);
+	}
 }
 
 void AOperationGameMode::CheckEnemySpawn()

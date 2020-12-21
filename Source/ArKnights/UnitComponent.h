@@ -4,6 +4,8 @@
 #include "PaperFlipbookComponent.h"
 #include "UnitComponent.generated.h"
 
+DECLARE_DELEGATE(FOnUnitDieDelegate);
+
 UENUM(BlueprintType)
 enum class EUnitState : uint8
 {
@@ -85,9 +87,14 @@ protected:
 	FTimerDynamicDelegate m_delegateChangeBlackValue;
 
 public:
+	FOnUnitDieDelegate OnUnitDieCallback;
+
+public:
 	UUnitComponent();
 
 	virtual void UpdateAnimation() {};
+
+	virtual void CheckFrameEvent() {};
 
 	void FadeIn(bool upAlphaValue);
 

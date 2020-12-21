@@ -5,6 +5,34 @@
 
 UOperatorComponent::UOperatorComponent()
 {
+	m_color.A = 1.f;
+	SetSpriteColor(m_color);
+}
+
+void UOperatorComponent::UpdateAnimation()
+{
+	CheckFrameEvent();
+}
+
+void UOperatorComponent::CheckFrameEvent()
+{
+	if (GetFlipbook() != nullptr && GetPlaybackPositionInFrames() == m_flipbooks[m_curState].frame)
+	{
+		switch (m_curState)
+		{
+		case EOperatorUnitFlipbook::Start: SetFlipbookState(EOperatorUnitFlipbook::Idle); break;
+		case EOperatorUnitFlipbook::Start_Back: m_curState = EOperatorUnitFlipbook::Idle_Back; break;
+		case EOperatorUnitFlipbook::Attack: 
+		case EOperatorUnitFlipbook::Attack_Back:
+		case EOperatorUnitFlipbook::Attack_Down: break;
+		case EOperatorUnitFlipbook::Die: 
+		{
+			FadeIn(false); 
+			SetPlayRate(0);
+			break;
+		}
+		}
+	}
 }
 
 void UOperatorComponent::Start(EOperatorCode operatorCode)
@@ -32,7 +60,7 @@ void UOperatorComponent::Start(EOperatorCode operatorCode)
 		}
 	}
 
-	m_curState = EOperatorUnitFlipbook::Idle;
+	m_curState = EOperatorUnitFlipbook::Start;
 	SetFlipbook(m_flipbooks[m_curState].Flipbook);
 	SetFlipbookTransform(m_flipbooks[m_curState].X, m_flipbooks[m_curState].Y, m_flipbooks[m_curState].Z);
 }
@@ -47,6 +75,16 @@ void UOperatorComponent::SetFlipbookTransform(float x, float y, float z)
 
 	FVector flipbookLocation = FVector(x, y, z);
 	SetRelativeLocation(flipbookLocation);
+}
+
+void UOperatorComponent::SetFlipbookState(EOperatorUnitFlipbook unitState)
+{
+	if (m_curState != unitState)
+	{
+		m_curState = unitState;
+		SetFlipbook(m_flipbooks[m_curState].Flipbook);
+		SetFlipbookTransform(m_flipbooks[m_curState].X, m_flipbooks[m_curState].Y, m_flipbooks[m_curState].Z);
+	}
 }
 
 void UOperatorComponent::WithDraw()

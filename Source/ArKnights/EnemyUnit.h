@@ -20,6 +20,12 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UEnemy* m_enemyData;
 
+	UPROPERTY()
+	float m_maxHP;
+
+	UPROPERTY()
+	float m_curHP;
+
 	FTimerHandle m_holdingTimerHandle;
 
 	int32 m_destinationIndex = 0;
@@ -47,4 +53,10 @@ public:
 	void CheckDestination();
 
 	void CancelToHolding();
+
+	UFUNCTION()
+	void UnitDie();
+
+	UFUNCTION()
+	void UnitDestroy();
 };

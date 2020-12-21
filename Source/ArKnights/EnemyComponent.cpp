@@ -7,6 +7,29 @@ UEnemyComponent::UEnemyComponent()
 {
 }
 
+void UEnemyComponent::UpdateAnimation()
+{
+	CheckFrameEvent();
+}
+
+void UEnemyComponent::CheckFrameEvent()
+{
+	if (GetFlipbook() != nullptr && GetPlaybackPositionInFrames() == m_flipbooks[m_curState].frame)
+	{
+		switch (m_curState)
+		{
+		case EEnemyUnitFlipbook::Attack: break;
+		case EEnemyUnitFlipbook::Die:
+		{
+			FadeIn(false);
+			BlackIn(true);
+			SetPlayRate(0);
+			break;
+		}
+		}
+	}
+}
+
 void UEnemyComponent::LoadFlipbookData(EEnemyCode enemyCode)\
 {
 	UWorld* pWorld = GetWorld();
@@ -37,11 +60,12 @@ void UEnemyComponent::LoadFlipbookData(EEnemyCode enemyCode)\
 
 void UEnemyComponent::SetFlipbookState(EEnemyUnitFlipbook unitState)
 {
-	if (m_curState == unitState) return;
-	
-	m_curState = unitState;
-
-	SetFlipbook(m_flipbooks[m_curState].Flipbook);
+	if (m_curState != unitState)
+	{
+		m_curState = unitState;
+		SetFlipbook(m_flipbooks[m_curState].Flipbook);
+		SetComponentTransform();
+	}
 }
 
 void UEnemyComponent::SetComponentTransform()

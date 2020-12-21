@@ -83,6 +83,7 @@ void AOperationSpectator::FinishPrepareUnitSetUp(ATowerBlock* towerBlock)
 	{
 		towerBlock->StartPlacement(m_placementUnitActor->GetOperatorData());
 		m_placementOperators.Add(m_selectedOperatorCode);
+		m_selectedOperatorButton = false;
 	}
 
 	if (m_placementUnitActor != nullptr)
