@@ -29,6 +29,15 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float Speed;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float BoxLocationX;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float BoxWidth;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float BoxHeight;
 };
 
 UCLASS()
@@ -37,15 +46,29 @@ class ARKNIGHTS_API UEnemy : public UObject
 	GENERATED_BODY()
 	
 private:
+	UPROPERTY()
 	EEnemyCode m_code;
 
+	UPROPERTY()
 	FString m_name;
 
+	UPROPERTY()
 	float m_maxHP;
 
+	UPROPERTY()
 	float m_atk;
 
+	UPROPERTY()
 	float m_speed;
+
+	UPROPERTY()
+	float m_boxLocationX;
+
+	UPROPERTY()
+	float m_boxWidth;
+
+	UPROPERTY()
+	float m_boxHeight;
 
 public:
 	UEnemy();
@@ -65,4 +88,13 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	float GetSpeed() const;
+
+	UFUNCTION(BlueprintCallable)
+	float GetBoxLocationX() const;
+
+	UFUNCTION(BlueprintCallable)
+	float GetBoxWidth() const;
+
+	UFUNCTION(BlueprintCallable)
+	float GetBoxHeight() const;
 };

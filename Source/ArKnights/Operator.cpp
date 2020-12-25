@@ -136,3 +136,13 @@ UTexture2D* UOperator::GetWholeBody() const
 {
 	return m_wholeBody;
 }
+
+float UOperator::GetMaxHP() const
+{
+	return m_data.MaxHP;
+}
+
+int32 UOperator::GetBlock() const
+{
+	return m_data.Block;
+}

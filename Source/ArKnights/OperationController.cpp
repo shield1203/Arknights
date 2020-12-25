@@ -12,30 +12,26 @@ void AOperationController::PlayerTick(float DeltaTime)
 {
 	Super::PlayerTick(DeltaTime);
 
-	if (AOperationSpectator* MyPawn = Cast<AOperationSpectator>(GetPawn()))
+	AOperationSpectator* MyPawn = Cast<AOperationSpectator>(GetPawn());
+	if (MyPawn && MyPawn->IsPrepareUnitSetUp())
 	{
-		if (MyPawn->IsPrepareUnitSetUp())
+		GetHitResultUnderFinger(m_touchIndex, ECC_Visibility, false, m_hit);
+
+		if (m_hit.bBlockingHit)
 		{
-			//FHitResult Hit;
-			GetHitResultUnderFinger(m_touchIndex, ECC_Visibility, false, m_hit);
-			//GetHitResultUnderCursor(ECC_Visibility, false, m_hit);
+			ATowerBlock* pTowerBlock = Cast<ATowerBlock>(m_hit.Actor);
+			FVector locationVector;
 
-			if (m_hit.bBlockingHit)
+			if (pTowerBlock && pTowerBlock->CanPlacement(MyPawn->GetSelectedOperatorClass()))
 			{
-				ATowerBlock* pTowerBlock = Cast<ATowerBlock>(m_hit.Actor);
-				FVector locationVector;
-
-				if (pTowerBlock && pTowerBlock->CanPlacement(MyPawn->GetSelectedOperatorClass()))
-				{
-					locationVector = pTowerBlock->GetActorLocation();
-					MyPawn->SetPrepareUnitLocation(locationVector, true);
-				}
-				else
-				{
-					locationVector = m_hit.ImpactPoint;
-					locationVector.Z -= 50.0f;
-					MyPawn->SetPrepareUnitLocation(locationVector);
-				}
+				locationVector = pTowerBlock->GetActorLocation();
+				MyPawn->SetPrepareUnitLocation(locationVector, true);
+			}
+			else
+			{
+				locationVector = m_hit.ImpactPoint;
+				locationVector.Z -= 50.0f;
+				MyPawn->SetPrepareUnitLocation(locationVector);
 			}
 		}
 	}

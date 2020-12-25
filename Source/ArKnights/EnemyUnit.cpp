@@ -1,5 +1,9 @@
 #include "EnemyUnit.h"
 #include "Components/SceneComponent.h"
+#include "Components/BoxComponent.h"
+#include "Components/CapsuleComponent.h"
+#include "Components/PrimitiveComponent.h"
+#include "TowerBlock.h"
 #include "EnemyComponent.h"
 #include "TimerManager.h"
 #include "OperationGameMode.h"
@@ -8,13 +12,18 @@
 AEnemyUnit::AEnemyUnit()
 {
 	PrimaryActorTick.bCanEverTick = true;
+	m_curHP = 1.0f;
 
 	m_sceneCompoent = CreateDefaultSubobject<USceneComponent>(TEXT("EnemyUnitSceneComponent"));
 	RootComponent = m_sceneCompoent;
 
+	m_collisionBoxComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("CollisionBoxComponent"));
+	m_collisionBoxComponent->SetupAttachment(RootComponent);
+
 	m_enemyComponent = CreateDefaultSubobject<UEnemyComponent>(TEXT("EnemyComponent"));
 	m_enemyComponent->SetupAttachment(RootComponent);
 	m_enemyComponent->OnUnitDieCallback.BindUFunction(this, FName("UnitDestroy"));
+	m_enemyComponent->OnUnitAttackCallback.BindUFunction(this, FName("UnitAttack"));
 
 	m_enemyData = CreateDefaultSubobject<UEnemy>(TEXT("EnemyUnitData"));
 }
@@ -29,6 +38,9 @@ void AEnemyUnit::Initialize(EEnemyCode enemyCode, TArray<float>DestinationXPos, 
 	m_enemyData->Initialize(enemyCode);
 	m_maxHP = m_enemyData->GetMaxHP();
 	m_curHP = m_maxHP;
+	m_boxLocationX = m_enemyData->GetBoxLocationX();
+	m_boxWidth = m_enemyData->GetBoxWidth();
+	m_boxHeight = m_enemyData->GetBoxHeight();
 
 	m_enemyComponent->LoadFlipbookData(enemyCode);
 	m_destinationXPos = DestinationXPos;
@@ -42,6 +54,17 @@ void AEnemyUnit::Initialize(EEnemyCode enemyCode, TArray<float>DestinationXPos, 
 void AEnemyUnit::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	m_enemyComponent->UpdateAnimation();
+
+	if (m_curHP <= 0)
+	{
+		m_enemyComponent->SetFlipbookState(EEnemyUnitFlipbook::Die);
+		m_collisionBoxComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		return;
+	}
+
+	if (CheckCollision()) return;
 
 	if (!m_holding)
 	{
@@ -59,7 +82,6 @@ void AEnemyUnit::MoveToLocation()
 	if (FVector::Distance(FVector(m_destinationXPos[m_destinationIndex], m_destinationYPos[m_destinationIndex], GetActorLocation().Z), GetActorLocation()) <= m_enemyData->GetSpeed())
 	{
 		SetActorLocation(FVector(m_destinationXPos[m_destinationIndex], m_destinationYPos[m_destinationIndex], GetActorLocation().Z));
-		UE_LOG(LogTemp, Warning, TEXT("%f"), FVector::Distance(FVector(m_destinationXPos[m_destinationIndex], m_destinationYPos[m_destinationIndex], GetActorLocation().Z), GetActorLocation()));
 	}
 	else
 	{
@@ -79,12 +101,6 @@ void AEnemyUnit::MoveToLocation()
 		
 		SetActorLocation(nextLocation);
 
-		if (FMath::Cos(fTheta) == 0 && FMath::Sin(fTheta) == 0)
-		{
-			nextLocation.X += m_enemyData->GetSpeed();
-			nextLocation.Y += m_enemyData->GetSpeed();
-		}
-
 		/*UE_LOG(LogTemp, Warning, TEXT("Theta : %f"), fTheta);
 		UE_LOG(LogTemp, Warning, TEXT("X : %f, Y : %f"), nextLocation.X, nextLocation.Y);
 		UE_LOG(LogTemp, Warning, TEXT("Cos : %f, Sin : %f"), (FMath::Cos(fTheta)), (FMath::Sin(fTheta)));
@@ -98,13 +114,22 @@ void AEnemyUnit::MoveToLocation()
 	}
 
 	m_enemyComponent->SetComponentTransform();
+	SetCollisionBoxTransform();
+
+}
+
+void AEnemyUnit::SetCollisionBoxTransform()
+{
+	m_collisionBoxComponent->SetRelativeScale3D(FVector(1.f, 1.f, 1.f));
+	m_collisionBoxComponent->SetRelativeRotation(FRotator(0.f, 0.f, 0.f));
+	m_collisionBoxComponent->SetBoxExtent(FVector(m_boxWidth, m_boxHeight, 0.5f));
+	m_collisionBoxComponent->SetRelativeLocation(FVector(m_boxLocationX, 0.f, 80.f));
 }
 
 void AEnemyUnit::CheckDestination()
 {
 	if (!m_destinationXPos.IsValidIndex(m_destinationIndex))
 	{
-		m_enemyComponent->SetFlipbookState(EEnemyUnitFlipbook::Idle);
 		m_holding = true;
 		return;
 	}
@@ -132,6 +157,49 @@ void AEnemyUnit::CancelToHolding()
 	m_holding = false;
 }
 
+bool AEnemyUnit::CheckCollision()
+{
+	if (m_targetUnit)
+	{
+		if (m_targetUnit->IsPlacementOperator())
+		{
+			return true;
+		}
+		else
+		{
+			m_targetUnit = nullptr;
+			m_holding = false;
+			return false;
+		}
+	}
+
+	TSet<UPrimitiveComponent*>pOverlappingComponents;
+	m_collisionBoxComponent->GetOverlappingComponents(pOverlappingComponents);
+	
+	for (auto overlappingComponent : pOverlappingComponents)
+	{
+		ATowerBlock* pTowerBlock = Cast<ATowerBlock>(overlappingComponent->GetOwner());
+		if (pTowerBlock && pTowerBlock->CanBlock())
+		{
+			m_targetUnit = pTowerBlock;
+			m_targetUnit->AddBlockUnit();
+			m_enemyComponent->SetFlipbookState(EEnemyUnitFlipbook::Attack);
+			m_holding = true;
+			return true;
+		}
+	}
+	
+	return false;
+}
+
+void AEnemyUnit::UnitAttack()
+{
+	if (m_targetUnit)
+	{
+		m_targetUnit->OperatorDamaged(m_enemyData->GetAtk());
+	}
+}
+
 void AEnemyUnit::UnitDie()
 {
 	m_enemyComponent->FadeIn(false);
@@ -150,6 +218,11 @@ void AEnemyUnit::UnitDie()
 				GameMode->MinusLifePoint();
 			}
 		}
+	}
+
+	if (m_targetUnit)
+	{
+		m_targetUnit->RemoveBlockUnit();
 	}
 }
 

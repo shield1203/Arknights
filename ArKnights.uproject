@@ -11,7 +11,8 @@
 			"AdditionalDependencies": [
 				"CoreUObject",
 				"Engine",
-				"Paper2D"
+				"Paper2D",
+				"UMG"
 			]
 		}
 	]

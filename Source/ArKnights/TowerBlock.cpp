@@ -1,11 +1,13 @@
 #include "TowerBlock.h"
 #include "Components/SceneComponent.h"
+#include "Components/CapsuleComponent.h"
 #include "Components/DecalComponent.h"
 #include "Materials/Material.h"
 #include "Materials/MaterialInterface.h"
 #include "ArKnightsGameInstance.h"
 #include "Components/StaticMeshComponent.h"
 #include "Blueprint/UserWidget.h"
+#include "HPBarWidget.h"
 #include "Components/WidgetComponent.h"
 #include "OperatorComponent.h"
 #include "UObject/ConstructorHelpers.h"
@@ -23,6 +25,13 @@ ATowerBlock::ATowerBlock()
 	m_staticMeshComponent->SetupAttachment(RootComponent);
 	m_staticMeshComponent->CreateDynamicMaterialInstance(0);
 
+	m_collisionCapsuleComponent = CreateDefaultSubobject<UCapsuleComponent>(TEXT("CollisionCapsuleComponent"));
+	m_collisionCapsuleComponent->SetupAttachment(RootComponent);
+	m_collisionCapsuleComponent->SetCapsuleRadius(38.f);
+	m_collisionCapsuleComponent->SetCapsuleHalfHeight(80.f);
+	m_collisionCapsuleComponent->SetRelativeLocation(FVector(0.f, 0.f, 80.f));
+	m_collisionCapsuleComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
 	m_operatorComponent = CreateDefaultSubobject<UOperatorComponent>(TEXT("TowerBlockOperatorComponent"));
 	m_operatorComponent->SetupAttachment(RootComponent);
 
@@ -34,7 +43,7 @@ ATowerBlock::ATowerBlock()
 	m_HPBarComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("TowerBlockHPBarComponent"));
 	m_HPBarComponent->SetupAttachment(RootComponent);
 	
-	static ConstructorHelpers::FClassFinder<UUserWidget> HPBarWidget(TEXT("/Game/Widget/Operation/WB_OperatorHPBar"));
+	static ConstructorHelpers::FClassFinder<UHPBarWidget> HPBarWidget(TEXT("/Game/Widget/Operation/WB_OperatorHPBar"));
 	if (HPBarWidget.Succeeded())
 	{
 		m_HPBarComponent->SetWidgetClass(HPBarWidget.Class);
@@ -45,13 +54,23 @@ ATowerBlock::ATowerBlock()
 	m_HPBarComponent->SetRelativeRotation(FRotator(90.0f, 0.0f, -180.0f));
 	m_HPBarComponent->SetRelativeLocation(FVector(-40.0f, 0.0f, 51.0f));
 	m_HPBarComponent->SetVisibility(false);
-	m_HPBarComponent->RegisterComponent();
+	m_HPBarComponent->RegisterComponent();	
 }
 
 void ATowerBlock::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	UHPBarWidget* pHPBarWidget = Cast<UHPBarWidget>(m_HPBarComponent->GetUserWidgetObject());
+	if (pHPBarWidget)
+	{
+		pHPBarWidget->SetOwningActor(this);
+		UE_LOG(LogTemp, Warning, TEXT("Set OwningActor"));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Failed Set OwningActor"));
+	}
 }
 
 void ATowerBlock::Tick(float DeltaTime)
@@ -70,6 +89,7 @@ void ATowerBlock::Tick(float DeltaTime)
 	if (m_operatorData)
 	{
 		m_HPBarComponent->SetVisibility(true);
+		m_collisionCapsuleComponent->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 		m_operatorComponent->UpdateAnimation();
 	}
 	else
@@ -142,6 +162,52 @@ void ATowerBlock::StartPlacement(UOperator* operatorData)
 	if (m_operatorData != nullptr) return;
 
 	m_operatorData = operatorData;
+	m_operatorCurHP = m_operatorData->GetMaxHP();
 
 	m_operatorComponent->Start(m_operatorData->GetOperatorCode());
+}
+
+float ATowerBlock::GetCurHP()
+{
+	if (m_operatorData)
+	{
+		return m_operatorCurHP / m_operatorData->GetMaxHP();
+	}
+
+	return 0;
+}
+
+bool ATowerBlock::IsPlacementOperator()
+{
+	if (m_operatorData) return true;
+
+	return false;
+}
+
+bool ATowerBlock::CanBlock()
+{
+	bool bCanBlock;
+	bCanBlock = (m_operatorData && m_operatorData->GetBlock() > m_blockUnit && m_type == ETowerBlockType::DownBlock) ? true : false;
+	
+	return bCanBlock;
+}
+
+void ATowerBlock::AddBlockUnit()
+{
+	m_blockUnit++;
+}
+
+void ATowerBlock::RemoveBlockUnit()
+{
+	m_blockUnit--;
+}
+
+void ATowerBlock::OperatorDamaged(float Damage)
+{
+	m_operatorCurHP -= Damage;
+	if (m_operatorCurHP <= 0)
+	{
+		m_operatorData = nullptr;
+		m_blockUnit = 0;
+	}
 }

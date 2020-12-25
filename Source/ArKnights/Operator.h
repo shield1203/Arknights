@@ -93,7 +93,7 @@ public:
 	float Replacement;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	uint8 Block;
+	int32 Block;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FString Thumbnail;
@@ -221,4 +221,10 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	class UTexture2D* GetWholeBody() const;
+
+	UFUNCTION(BlueprintCallable)
+	float GetMaxHP() const;
+
+	UFUNCTION(BlueprintCallable)
+	int32 GetBlock() const;
 };

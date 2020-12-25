@@ -5,6 +5,8 @@
 #include "Enemy.h"
 #include "EnemyUnit.generated.h"
 
+class ATowerBlock;
+
 UCLASS()
 class ARKNIGHTS_API AEnemyUnit : public AActor
 {
@@ -14,6 +16,9 @@ protected:
 	UPROPERTY()
 	class USceneComponent* m_sceneCompoent;
 
+	UPROPERTY()
+	class UBoxComponent* m_collisionBoxComponent;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UEnemyComponent* m_enemyComponent;
 
@@ -21,21 +26,37 @@ protected:
 	UEnemy* m_enemyData;
 
 	UPROPERTY()
+	ATowerBlock* m_targetUnit;
+
+	UPROPERTY()
 	float m_maxHP;
 
 	UPROPERTY()
 	float m_curHP;
 
+	UPROPERTY()
+	float m_boxLocationX;
+
+	UPROPERTY()
+	float m_boxWidth;
+
+	UPROPERTY()
+	float m_boxHeight;
+
 	FTimerHandle m_holdingTimerHandle;
 
 	int32 m_destinationIndex = 0;
 
+	UPROPERTY()
 	TArray<float>m_destinationXPos;
 
+	UPROPERTY()
 	TArray<float>m_destinationYPos;
 
+	UPROPERTY()
 	TArray<float>m_holdingTime;
 
+	UPROPERTY()
 	bool m_holding = false;
 
 protected:
@@ -50,9 +71,16 @@ public:
 
 	void MoveToLocation();
 
+	void SetCollisionBoxTransform();
+
 	void CheckDestination();
 
 	void CancelToHolding();
+
+	bool CheckCollision();
+
+	UFUNCTION()
+	void UnitAttack();
 
 	UFUNCTION()
 	void UnitDie();

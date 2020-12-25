@@ -24,14 +24,20 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UStaticMeshComponent* m_staticMeshComponent;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class UCapsuleComponent* m_collisionCapsuleComponent;
+
 	UPROPERTY()
 	class UOperatorComponent* m_operatorComponent;
 
 	UPROPERTY()
-	TMap<class UDecalComponent*, FVector2D> m_attackRange;
+	UOperator* m_operatorData;
 
 	UPROPERTY()
 	class UMaterialInterface* m_materialInstance;
+
+	UPROPERTY()
+	TMap<class UDecalComponent*, FVector2D> m_attackRange;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UWidgetComponent* m_HPBarComponent;
@@ -47,7 +53,11 @@ protected:
 
 	FVector m_ResultColor = FVector(0.130859f, 0.697917f, 0.130859f);
 
-	UOperator* m_operatorData;
+	UPROPERTY()
+	int32 m_blockUnit = 0;
+
+	UPROPERTY()
+	float m_operatorCurHP = 0;
 
 protected:
 	virtual void BeginPlay() override;
@@ -64,4 +74,17 @@ public:
 	void AppearPlacementBlock(float DeltaTime);
 
 	void StartPlacement(UOperator* operatorData);
+
+	UFUNCTION(BlueprintCallable)
+	float GetCurHP();
+
+	bool IsPlacementOperator();
+
+	bool CanBlock();
+
+	void AddBlockUnit();
+
+	void RemoveBlockUnit();
+
+	void OperatorDamaged(float Damage);
 };

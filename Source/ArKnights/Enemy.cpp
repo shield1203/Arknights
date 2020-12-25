@@ -30,6 +30,9 @@ void UEnemy::LoadEnemyData(EEnemyCode code)
 	m_maxHP = pEnemyData->MaxHP;
 	m_atk = pEnemyData->ATK;
 	m_speed = pEnemyData->Speed;
+	m_boxLocationX = pEnemyData->BoxLocationX;
+	m_boxWidth = pEnemyData->BoxWidth;
+	m_boxHeight = pEnemyData->BoxHeight;
 }
 
 FString UEnemy::GetName() const
@@ -50,4 +53,19 @@ float UEnemy::GetAtk() const
 float UEnemy::GetSpeed() const
 {
 	return m_speed;
+}
+
+float UEnemy::GetBoxLocationX() const
+{
+	return m_boxLocationX;
+}
+
+float UEnemy::GetBoxWidth() const
+{
+	return m_boxWidth;
+}
+
+float UEnemy::GetBoxHeight() const
+{
+	return m_boxHeight;
 }

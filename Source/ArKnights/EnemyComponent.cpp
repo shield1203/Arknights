@@ -18,7 +18,7 @@ void UEnemyComponent::CheckFrameEvent()
 	{
 		switch (m_curState)
 		{
-		case EEnemyUnitFlipbook::Attack: break;
+		case EEnemyUnitFlipbook::Attack: OnUnitAttackCallback.ExecuteIfBound(); break;
 		case EEnemyUnitFlipbook::Die:
 		{
 			FadeIn(false);

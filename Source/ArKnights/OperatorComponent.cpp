@@ -33,6 +33,8 @@ void UOperatorComponent::CheckFrameEvent()
 		}
 		}
 	}
+
+	
 }
 
 void UOperatorComponent::Start(EOperatorCode operatorCode)

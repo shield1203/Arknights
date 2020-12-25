@@ -4,6 +4,7 @@
 #include "PaperFlipbookComponent.h"
 #include "UnitComponent.generated.h"
 
+DECLARE_DELEGATE(FOnUnitAttackDelegate);
 DECLARE_DELEGATE(FOnUnitDieDelegate);
 
 UENUM(BlueprintType)
@@ -87,6 +88,8 @@ protected:
 	FTimerDynamicDelegate m_delegateChangeBlackValue;
 
 public:
+	FOnUnitAttackDelegate OnUnitAttackCallback;
+
 	FOnUnitDieDelegate OnUnitDieCallback;
 
 public:
