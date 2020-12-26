@@ -34,6 +34,8 @@ ATowerBlock::ATowerBlock()
 
 	m_operatorComponent = CreateDefaultSubobject<UOperatorComponent>(TEXT("TowerBlockOperatorComponent"));
 	m_operatorComponent->SetupAttachment(RootComponent);
+	m_operatorComponent->OnUnitAttackCallback.BindUFunction(this, FName("UnitAttack"));
+	m_operatorComponent->OnUnitDieCallback.BindUFunction(this, FName("UnitWithdraw"));
 
 	static ConstructorHelpers::FObjectFinder<UMaterial>Material(TEXT("Material'/Game/Blueprint/MT_Range.MT_Range'"));
 	if (Material.Succeeded()) {
@@ -53,7 +55,6 @@ ATowerBlock::ATowerBlock()
 	m_HPBarComponent->SetDrawSize(FVector2D(160.0f, 10.0f));
 	m_HPBarComponent->SetRelativeRotation(FRotator(90.0f, 0.0f, -180.0f));
 	m_HPBarComponent->SetRelativeLocation(FVector(-40.0f, 0.0f, 51.0f));
-	m_HPBarComponent->SetVisibility(false);
 	m_HPBarComponent->RegisterComponent();	
 }
 
@@ -65,12 +66,9 @@ void ATowerBlock::BeginPlay()
 	if (pHPBarWidget)
 	{
 		pHPBarWidget->SetOwningActor(this);
-		UE_LOG(LogTemp, Warning, TEXT("Set OwningActor"));
 	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Failed Set OwningActor"));
-	}
+
+	m_HPBarComponent->SetVisibility(false);
 }
 
 void ATowerBlock::Tick(float DeltaTime)
@@ -86,16 +84,7 @@ void ATowerBlock::Tick(float DeltaTime)
 		m_staticMeshComponent->SetVectorParameterValueOnMaterials(TEXT("Color"), m_InitColor);
 	}
 
-	if (m_operatorData)
-	{
-		m_HPBarComponent->SetVisibility(true);
-		m_collisionCapsuleComponent->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
-		m_operatorComponent->UpdateAnimation();
-	}
-	else
-	{
-		m_HPBarComponent->SetVisibility(false);
-	}
+	m_operatorComponent->UpdateAnimation();
 }
 
 bool ATowerBlock::CanPlacement(EOperatorClass operatorClass)
@@ -165,6 +154,10 @@ void ATowerBlock::StartPlacement(UOperator* operatorData)
 	m_operatorCurHP = m_operatorData->GetMaxHP();
 
 	m_operatorComponent->Start(m_operatorData->GetOperatorCode());
+
+	m_collisionCapsuleComponent->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+
+	m_HPBarComponent->SetVisibility(true);
 }
 
 float ATowerBlock::GetCurHP()
@@ -202,12 +195,29 @@ void ATowerBlock::RemoveBlockUnit()
 	m_blockUnit--;
 }
 
+void ATowerBlock::UnitAttack()
+{
+
+}
+
 void ATowerBlock::OperatorDamaged(float Damage)
 {
 	m_operatorCurHP -= Damage;
-	if (m_operatorCurHP <= 0)
-	{
-		m_operatorData = nullptr;
-		m_blockUnit = 0;
-	}
+	m_operatorComponent->UnitDamageColor();
+
+	if (m_operatorCurHP <= 0) UnitDie();
+}
+
+void ATowerBlock::UnitDie()
+{
+	m_operatorData = nullptr;
+	m_operatorComponent->SetFlipbookState(EOperatorUnitFlipbook::Die);
+	m_collisionCapsuleComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	m_HPBarComponent->SetVisibility(false);
+}
+
+void ATowerBlock::UnitWithdraw()
+{
+	// 유닛 선택 블록 리스트에 복귀, 딜레이 카운트 포함
+	m_operatorComponent->RemoveFlipbookData();
 }

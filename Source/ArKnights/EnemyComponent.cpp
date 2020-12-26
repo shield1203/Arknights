@@ -19,13 +19,7 @@ void UEnemyComponent::CheckFrameEvent()
 		switch (m_curState)
 		{
 		case EEnemyUnitFlipbook::Attack: OnUnitAttackCallback.ExecuteIfBound(); break;
-		case EEnemyUnitFlipbook::Die:
-		{
-			FadeIn(false);
-			BlackIn(true);
-			SetPlayRate(0);
-			break;
-		}
+		case EEnemyUnitFlipbook::Die: SetPlayRate(0); break;
 		}
 	}
 }

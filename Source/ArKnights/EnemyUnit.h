@@ -29,6 +29,9 @@ protected:
 	ATowerBlock* m_targetUnit;
 
 	UPROPERTY()
+	bool m_life = true;
+
+	UPROPERTY()
 	float m_maxHP;
 
 	UPROPERTY()
@@ -68,6 +71,8 @@ public:
 	void Initialize(EEnemyCode enemyCode, TArray<float>DestinationXPos, TArray<float>DestinationYPos, TArray<float>HoldingTime);
 
 	virtual void Tick(float DeltaTime) override;
+
+	bool IsLife() const;
 
 	void MoveToLocation();
 

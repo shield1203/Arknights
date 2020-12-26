@@ -11,6 +11,8 @@ UOperatorComponent::UOperatorComponent()
 
 void UOperatorComponent::UpdateAnimation()
 {
+	if (!m_life) return;
+
 	CheckFrameEvent();
 }
 
@@ -21,32 +23,30 @@ void UOperatorComponent::CheckFrameEvent()
 		switch (m_curState)
 		{
 		case EOperatorUnitFlipbook::Start: SetFlipbookState(EOperatorUnitFlipbook::Idle); break;
-		case EOperatorUnitFlipbook::Start_Back: m_curState = EOperatorUnitFlipbook::Idle_Back; break;
+		case EOperatorUnitFlipbook::Start_Back: SetFlipbookState(EOperatorUnitFlipbook::Idle_Back); break;
 		case EOperatorUnitFlipbook::Attack: 
 		case EOperatorUnitFlipbook::Attack_Back:
 		case EOperatorUnitFlipbook::Attack_Down: break;
 		case EOperatorUnitFlipbook::Die: 
 		{
-			FadeIn(false); 
+			m_life = false;
+			FadeIn(false);
+			BlackIn(true);
 			SetPlayRate(0);
 			break;
 		}
 		}
 	}
-
-	
 }
 
 void UOperatorComponent::Start(EOperatorCode operatorCode)
 {
+	m_life = true;
+
 	UWorld* pWorld = GetWorld();
 	UArKnightsGameInstance* pGameInstance = pWorld ? pWorld->GetGameInstance<UArKnightsGameInstance>() : nullptr;
 
-	if (!pGameInstance)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("GameInstance nullptr"));
-		return;
-	}
+	if (!pGameInstance) return;
 
 	for (int32 i = 0; i < pGameInstance->GetDataTable(EGameDataTable::OperatorFlipbookData)->GetRowNames().Num(); i++)
 	{
@@ -89,7 +89,7 @@ void UOperatorComponent::SetFlipbookState(EOperatorUnitFlipbook unitState)
 	}
 }
 
-void UOperatorComponent::WithDraw()
+void UOperatorComponent::RemoveFlipbookData()
 {
-	
+	m_flipbooks.Empty();
 }

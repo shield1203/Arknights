@@ -87,6 +87,10 @@ protected:
 
 	FTimerDynamicDelegate m_delegateChangeBlackValue;
 
+	FTimerHandle m_damageColorTimerHandle;
+
+	FTimerDynamicDelegate m_delegateChangeColorValue;
+
 public:
 	FOnUnitAttackDelegate OnUnitAttackCallback;
 
@@ -109,5 +113,8 @@ public:
 	UFUNCTION()
 	void ChangeBlackValue();
 
-	//void Takedamage();
+	void UnitDamageColor();
+
+	UFUNCTION()
+	void ChangeColorValue();
 };

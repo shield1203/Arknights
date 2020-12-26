@@ -79,6 +79,8 @@ void AOperationSpectator::FinishPrepareUnitSetUp(ATowerBlock* towerBlock)
 {
 	m_prepareUnitSetUp = false;
 
+	if (m_placementUnitActor == nullptr) return;
+
 	if (towerBlock != nullptr && towerBlock->CanPlacement(m_selectedOperatorClass))
 	{
 		towerBlock->StartPlacement(m_placementUnitActor->GetOperatorData());
@@ -86,7 +88,7 @@ void AOperationSpectator::FinishPrepareUnitSetUp(ATowerBlock* towerBlock)
 		m_selectedOperatorButton = false;
 	}
 
-	if (m_placementUnitActor != nullptr)
+	if (m_placementUnitActor)
 	{
 		m_placementUnitActor->Destroy();
 		m_placementUnitActor = nullptr;

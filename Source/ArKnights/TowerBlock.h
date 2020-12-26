@@ -86,5 +86,13 @@ public:
 
 	void RemoveBlockUnit();
 
+	UFUNCTION(BlueprintCallable)
+	void UnitAttack();
+
 	void OperatorDamaged(float Damage);
+
+	void UnitDie();
+
+	UFUNCTION(BlueprintCallable)
+	void UnitWithdraw();
 };

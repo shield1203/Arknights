@@ -57,12 +57,7 @@ void AEnemyUnit::Tick(float DeltaTime)
 
 	m_enemyComponent->UpdateAnimation();
 
-	if (m_curHP <= 0)
-	{
-		m_enemyComponent->SetFlipbookState(EEnemyUnitFlipbook::Die);
-		m_collisionBoxComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-		return;
-	}
+	if (!m_life) return;
 
 	if (CheckCollision()) return;
 
@@ -72,6 +67,11 @@ void AEnemyUnit::Tick(float DeltaTime)
 	}
 
 	CheckDestination();
+}
+
+bool AEnemyUnit::IsLife() const
+{
+	return m_life;
 }
 
 void AEnemyUnit::MoveToLocation()
@@ -202,8 +202,11 @@ void AEnemyUnit::UnitAttack()
 
 void AEnemyUnit::UnitDie()
 {
+	m_life = false;
+	m_enemyComponent->SetFlipbookState(EEnemyUnitFlipbook::Die);
 	m_enemyComponent->FadeIn(false);
 	m_enemyComponent->BlackIn(true);
+	m_collisionBoxComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	m_holding = true;
 
 	UWorld* pWorld = GetWorld();

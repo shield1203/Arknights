@@ -23,6 +23,7 @@ UUnitComponent::UUnitComponent()
 
 	m_delegateChangeAlphaValue.BindDynamic(this, &UUnitComponent::ChangeAlphaValue);
 	m_delegateChangeBlackValue.BindDynamic(this, &UUnitComponent::ChangeBlackValue);
+	m_delegateChangeColorValue.BindDynamic(this, &UUnitComponent::ChangeColorValue);
 }
 
 void UUnitComponent::FadeIn(bool upAlphaValue)
@@ -78,5 +79,31 @@ void UUnitComponent::ChangeBlackValue()
 	if (fColor <= 0 || fColor >= 1)
 	{
 		GetWorld()->GetTimerManager().ClearTimer(m_blackTimerHandle);
+	}
+}
+
+void UUnitComponent::UnitDamageColor()
+{
+	m_color.G = 0.f;
+	m_color.B = 0.f;
+
+	SetSpriteColor(m_color);
+
+	if (!GetWorld()->GetTimerManager().IsTimerActive(m_damageColorTimerHandle))
+	{
+		GetWorld()->GetTimerManager().SetTimer(m_damageColorTimerHandle, m_delegateChangeColorValue, 0.02, true);
+	}
+}
+
+void UUnitComponent::ChangeColorValue()
+{
+	m_color.G += 0.1f;
+	m_color.B += 0.1f;
+
+	SetSpriteColor(m_color);
+
+	if (m_color.G >= 1.f)
+	{
+		GetWorld()->GetTimerManager().ClearTimer(m_damageColorTimerHandle);
 	}
 }

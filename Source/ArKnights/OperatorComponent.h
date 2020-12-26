@@ -61,6 +61,9 @@ protected:
 	UPROPERTY()
 	TMap<EOperatorUnitFlipbook, FFlipbookInfo> m_flipbooks;
 
+	UPROPERTY()
+	bool m_life = false;
+
 public:
 	UOperatorComponent();
 
@@ -74,5 +77,5 @@ public:
 
 	void SetFlipbookState(EOperatorUnitFlipbook unitState);
 
-	void WithDraw();
+	void RemoveFlipbookData();
 };
