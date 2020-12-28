@@ -117,6 +117,11 @@ int32 UOperator::GetCost() const
 	return m_data.Cost;
 }
 
+float UOperator::GetAtk() const
+{
+	return m_data.ATK;
+}
+
 TArray<FOperatorRange> UOperator::GetAttackRange() const
 {
 	return m_attackRange;

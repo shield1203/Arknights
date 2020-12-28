@@ -19,7 +19,8 @@ APlacementUnitActor::APlacementUnitActor()
 	GetRenderComponent()->SetReceivesDecals(false);
 
 	static ConstructorHelpers::FObjectFinder<UMaterial>Material(TEXT("Material'/Game/Blueprint/MT_Range.MT_Range'"));
-	if (Material.Succeeded()) {
+	if (Material.Succeeded()) 
+	{
 		m_materialInstance = Material.Object;
 	}
 }
@@ -69,7 +70,7 @@ void APlacementUnitActor::Initialize(UOperator* operatorData)
 				pRangeDecalComponent->SetDecalMaterial(m_materialInstance);
 				pRangeDecalComponent->DecalSize = FVector(128.0f, 256.0f, 256.0f);
 				pRangeDecalComponent->SetRelativeScale3D(FVector(1.f, 0.196f, 0.196f));
-				pRangeDecalComponent->SetRelativeRotation(FRotator(90.f, 0.0f, 0.0f).Quaternion());
+				pRangeDecalComponent->SetRelativeRotation(FRotator(270.f, 0.0f, 0.0f).Quaternion());
 				pRangeDecalComponent->SetRelativeLocation(FVector(pRangeData->YRange * 100, pRangeData->XRange * 100, 0));
 
 				m_decalComponents.Add(pRangeDecalComponent, FVector2D(pRangeData->YRange * 100, pRangeData->XRange * 100));

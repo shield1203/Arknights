@@ -26,7 +26,7 @@ void UOperatorComponent::CheckFrameEvent()
 		case EOperatorUnitFlipbook::Start_Back: SetFlipbookState(EOperatorUnitFlipbook::Idle_Back); break;
 		case EOperatorUnitFlipbook::Attack: 
 		case EOperatorUnitFlipbook::Attack_Back:
-		case EOperatorUnitFlipbook::Attack_Down: break;
+		case EOperatorUnitFlipbook::Attack_Down: OnUnitAttackCallback.ExecuteIfBound(); break;
 		case EOperatorUnitFlipbook::Die: 
 		{
 			m_life = false;
@@ -39,9 +39,16 @@ void UOperatorComponent::CheckFrameEvent()
 	}
 }
 
+EOperatorUnitFlipbook UOperatorComponent::GetCurFlipbookState() const
+{
+	return m_curState;
+}
+
 void UOperatorComponent::Start(EOperatorCode operatorCode)
 {
 	m_life = true;
+	SetInitColor();
+	SetPlayRate(1);
 
 	UWorld* pWorld = GetWorld();
 	UArKnightsGameInstance* pGameInstance = pWorld ? pWorld->GetGameInstance<UArKnightsGameInstance>() : nullptr;

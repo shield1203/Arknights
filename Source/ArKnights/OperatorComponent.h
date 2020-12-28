@@ -71,6 +71,8 @@ public:
 
 	virtual void CheckFrameEvent();
 
+	EOperatorUnitFlipbook GetCurFlipbookState() const;
+
 	void Start(EOperatorCode operatorCode);
 
 	void SetFlipbookTransform(float x, float y, float z);

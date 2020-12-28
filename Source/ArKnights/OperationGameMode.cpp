@@ -22,12 +22,16 @@ AOperationGameMode::AOperationGameMode()
 	SpectatorClass = AOperationSpectator::StaticClass();
 	DefaultPawnClass = AOperationSpectator::StaticClass();
 
-	//m_enemyManager = CreateDefaultSubobject<UEnemyManager>(TEXT("Operation_EnemyManager"));
-
 	static ConstructorHelpers::FClassFinder<UUserWidget> OperationWidget(TEXT("/Game/Widget/Operation/WB_Loading"));
 	if (OperationWidget.Succeeded())
 	{
 		m_mainWidget = CreateWidget(GetWorld(), OperationWidget.Class);
+	}
+
+	static ConstructorHelpers::FClassFinder<UUserWidget> OperationCompleteWidget(TEXT("/Game/Widget/Operation/WB_MissionComplete"));
+	if (OperationCompleteWidget.Succeeded())
+	{
+		m_missionCompleteWidget = CreateWidget(GetWorld(), OperationCompleteWidget.Class);
 	}
 
 	static ConstructorHelpers::FClassFinder<UUserWidget> OperationFailedWidget(TEXT("/Game/Widget/Operation/WB_MissionFailed"));
@@ -121,7 +125,6 @@ void AOperationGameMode::MinusLifePoint()
 	{
 		SetSubWidget(m_missionFailedWidget);
 	}
-	UE_LOG(LogTemp, Warning, TEXT("lifePoint Minus"));
 }
 
 void AOperationGameMode::AddCost(int32 value)
@@ -146,10 +149,14 @@ void AOperationGameMode::AddCostGauge()
 
 void AOperationGameMode::AddRemoveEnemyCount()
 {
-	m_removeEnemyCount++;
+	m_removeEnemyCount++;	
+}
+
+void AOperationGameMode::CheckOperationComplete()
+{
 	if (m_removeEnemyCount == m_operationManager->GetOperationEnemies())
 	{
-		// SetSubWidget(m_missionSuccessWidget);
+		SetSubWidget(m_missionCompleteWidget);
 	}
 }
 

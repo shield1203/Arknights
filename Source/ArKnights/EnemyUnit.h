@@ -23,6 +23,9 @@ protected:
 	class UEnemyComponent* m_enemyComponent;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class UWidgetComponent* m_HPBarComponent;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UEnemy* m_enemyData;
 
 	UPROPERTY()
@@ -74,15 +77,22 @@ public:
 
 	bool IsLife() const;
 
+	UFUNCTION(BlueprintCallable)
+	float GetCurHP();
+
 	void MoveToLocation();
 
 	void SetCollisionBoxTransform();
+
+	void SetHPBarTransform();
 
 	void CheckDestination();
 
 	void CancelToHolding();
 
 	bool CheckCollision();
+
+	void EnemyDamaged(float Damage);
 
 	UFUNCTION()
 	void UnitAttack();

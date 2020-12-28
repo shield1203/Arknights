@@ -1,18 +1,19 @@
 #include "TowerBlock.h"
 #include "Components/SceneComponent.h"
 #include "Components/CapsuleComponent.h"
-#include "Components/DecalComponent.h"
-#include "Materials/Material.h"
-#include "Materials/MaterialInterface.h"
-#include "ArKnightsGameInstance.h"
+#include "Components/BoxComponent.h"
 #include "Components/StaticMeshComponent.h"
-#include "Blueprint/UserWidget.h"
-#include "HPBarWidget.h"
 #include "Components/WidgetComponent.h"
-#include "OperatorComponent.h"
 #include "UObject/ConstructorHelpers.h"
-#include "OperationSpectator.h"
+#include "Blueprint/UserWidget.h"
 #include "Kismet/GameplayStatics.h"
+#include "ArKnightsGameInstance.h"
+#include "OperationSpectator.h"
+#include "OperatorComponent.h"
+#include "RangeDecalComponent.h"
+#include "HPBarWidget.h"
+#include "EnemyUnit.h"
+#include "OperationSpectator.h"
 
 ATowerBlock::ATowerBlock()
 {
@@ -37,11 +38,6 @@ ATowerBlock::ATowerBlock()
 	m_operatorComponent->OnUnitAttackCallback.BindUFunction(this, FName("UnitAttack"));
 	m_operatorComponent->OnUnitDieCallback.BindUFunction(this, FName("UnitWithdraw"));
 
-	static ConstructorHelpers::FObjectFinder<UMaterial>Material(TEXT("Material'/Game/Blueprint/MT_Range.MT_Range'"));
-	if (Material.Succeeded()) {
-		m_materialInstance = Material.Object;
-	}
-
 	m_HPBarComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("TowerBlockHPBarComponent"));
 	m_HPBarComponent->SetupAttachment(RootComponent);
 	
@@ -50,7 +46,6 @@ ATowerBlock::ATowerBlock()
 	{
 		m_HPBarComponent->SetWidgetClass(HPBarWidget.Class);
 	}
-
 	m_HPBarComponent->SetWidgetSpace(EWidgetSpace::Screen);
 	m_HPBarComponent->SetDrawSize(FVector2D(160.0f, 10.0f));
 	m_HPBarComponent->SetRelativeRotation(FRotator(90.0f, 0.0f, -180.0f));
@@ -85,6 +80,25 @@ void ATowerBlock::Tick(float DeltaTime)
 	}
 
 	m_operatorComponent->UpdateAnimation();
+
+	if (!m_operatorData) return;
+
+	switch (m_operatorComponent->GetCurFlipbookState())
+	{
+	case EOperatorUnitFlipbook::Idle: CheckRangeInEnemy(); break;
+	case EOperatorUnitFlipbook::Attack:
+	case EOperatorUnitFlipbook::Attack_Back:
+	case EOperatorUnitFlipbook::Attack_Down:
+	{
+		CheckRangeInEnemy();
+		if (!m_targetUnit || !m_targetUnit->IsLife())
+		{
+			m_targetUnit = nullptr;
+			m_operatorComponent->SetFlipbookState(EOperatorUnitFlipbook::Idle);
+		}
+		break;
+	}
+	}
 }
 
 bool ATowerBlock::CanPlacement(EOperatorClass operatorClass)
@@ -157,6 +171,33 @@ void ATowerBlock::StartPlacement(UOperator* operatorData)
 
 	m_collisionCapsuleComponent->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 
+	m_targetUnit = nullptr;
+
+	UWorld* pWorld = GetWorld();
+	UArKnightsGameInstance* pGameInstance = pWorld ? pWorld->GetGameInstance<UArKnightsGameInstance>() : nullptr;
+
+	if (!pGameInstance)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("GameInstance nullptr"));
+		return;
+	}
+
+	for (int32 i = 0; i < pGameInstance->GetDataTable(EGameDataTable::OperatorRangeData)->GetRowNames().Num(); i++)
+	{
+		FOperatorRange* pRangeData = pGameInstance->GetDataTable(EGameDataTable::OperatorRangeData)->FindRow<FOperatorRange>(FName(*(FString::FormatAsNumber(i))), FString(""));
+		if (operatorData->GetOperatorCode() == pRangeData->Code)
+		{
+			URangeDecalComponent* pRangeDecalComponent = NewObject<URangeDecalComponent>(this, URangeDecalComponent::StaticClass());
+
+			pRangeDecalComponent->SetupAttachment(RootComponent);
+			pRangeDecalComponent->RegisterComponentWithWorld(pWorld);
+			pRangeDecalComponent->GetCollisionBoxComponent()->RegisterComponentWithWorld(pWorld);
+			pRangeDecalComponent->SetComponentTransform(pRangeData->XRange, pRangeData->YRange);
+			pRangeDecalComponent->SetVisibility(false);
+			m_attackRange.Add(pRangeDecalComponent, FVector2D(pRangeData->YRange, pRangeData->XRange));
+		}
+	}
+
 	m_HPBarComponent->SetVisibility(true);
 }
 
@@ -195,9 +236,26 @@ void ATowerBlock::RemoveBlockUnit()
 	m_blockUnit--;
 }
 
+void ATowerBlock::CheckRangeInEnemy()
+{
+	if (m_targetUnit) return;
+
+	for (auto collisionBox : m_attackRange)
+	{
+		m_targetUnit = collisionBox.Key->CheckCollision();
+		if (m_targetUnit != nullptr)
+		{
+			m_operatorComponent->SetFlipbookState(EOperatorUnitFlipbook::Attack);
+			return;
+		}
+	}
+}
+
 void ATowerBlock::UnitAttack()
 {
-
+	if (!m_targetUnit || !m_operatorData) return;
+	
+	m_targetUnit->EnemyDamaged(m_operatorData->GetAtk());
 }
 
 void ATowerBlock::OperatorDamaged(float Damage)
@@ -210,10 +268,26 @@ void ATowerBlock::OperatorDamaged(float Damage)
 
 void ATowerBlock::UnitDie()
 {
+	UWorld* pWorld = GetWorld();
+	if (pWorld)
+	{
+		AOperationSpectator* pPlayerPawn = Cast<AOperationSpectator>(UGameplayStatics::GetPlayerPawn(pWorld, 0));
+		if (pPlayerPawn)
+		{
+			pPlayerPawn->RemovePlacementOperator(m_operatorData->GetOperatorCode());
+		}
+	}
+
 	m_operatorData = nullptr;
 	m_operatorComponent->SetFlipbookState(EOperatorUnitFlipbook::Die);
 	m_collisionCapsuleComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	m_HPBarComponent->SetVisibility(false);
+	for (auto rangeComponent : m_attackRange)
+	{
+		rangeComponent.Key->GetCollisionBoxComponent()->DestroyComponent();
+		rangeComponent.Key->DestroyComponent();
+	}
+	m_attackRange.Empty();
 }
 
 void ATowerBlock::UnitWithdraw()

@@ -3,11 +3,15 @@
 #include "Components/BoxComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/PrimitiveComponent.h"
+#include "Components/WidgetComponent.h"
+#include "Blueprint/UserWidget.h"
+#include "HPBarWidget.h"
 #include "TowerBlock.h"
 #include "EnemyComponent.h"
 #include "TimerManager.h"
 #include "OperationGameMode.h"
 #include "Kismet/GameplayStatics.h"
+#include "UObject/ConstructorHelpers.h"
 
 AEnemyUnit::AEnemyUnit()
 {
@@ -25,12 +29,31 @@ AEnemyUnit::AEnemyUnit()
 	m_enemyComponent->OnUnitDieCallback.BindUFunction(this, FName("UnitDestroy"));
 	m_enemyComponent->OnUnitAttackCallback.BindUFunction(this, FName("UnitAttack"));
 
+	m_HPBarComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("EnemyHPBarComponent"));
+	m_HPBarComponent->SetupAttachment(RootComponent);
+
+	static ConstructorHelpers::FClassFinder<UHPBarWidget> HPBarWidget(TEXT("/Game/Widget/Operation/WB_EnemyHPBar"));
+	if (HPBarWidget.Succeeded())
+	{
+		m_HPBarComponent->SetWidgetClass(HPBarWidget.Class);
+	}
+	m_HPBarComponent->SetWidgetSpace(EWidgetSpace::Screen);
+	m_HPBarComponent->SetDrawSize(FVector2D(126.0f, 7.0f));
+
 	m_enemyData = CreateDefaultSubobject<UEnemy>(TEXT("EnemyUnitData"));
 }
 
 void AEnemyUnit::BeginPlay()
 {
 	Super::BeginPlay();
+
+	UHPBarWidget* pHPBarWidget = Cast<UHPBarWidget>(m_HPBarComponent->GetUserWidgetObject());
+	if (pHPBarWidget)
+	{
+		pHPBarWidget->SetOwningActor(this);
+	}
+
+	m_HPBarComponent->SetVisibility(false);
 }
 
 void AEnemyUnit::Initialize(EEnemyCode enemyCode, TArray<float>DestinationXPos, TArray<float>DestinationYPos, TArray<float>HoldingTime)
@@ -74,6 +97,16 @@ bool AEnemyUnit::IsLife() const
 	return m_life;
 }
 
+float AEnemyUnit::GetCurHP()
+{
+	if (m_life)
+	{
+		return m_curHP / m_enemyData->GetMaxHP();
+	}
+
+	return 0;
+}
+
 void AEnemyUnit::MoveToLocation()
 {
 	m_enemyComponent->SetFlipbookState(EEnemyUnitFlipbook::Move);
@@ -100,22 +133,11 @@ void AEnemyUnit::MoveToLocation()
 		}
 		
 		SetActorLocation(nextLocation);
-
-		/*UE_LOG(LogTemp, Warning, TEXT("Theta : %f"), fTheta);
-		UE_LOG(LogTemp, Warning, TEXT("X : %f, Y : %f"), nextLocation.X, nextLocation.Y);
-		UE_LOG(LogTemp, Warning, TEXT("Cos : %f, Sin : %f"), (FMath::Cos(fTheta)), (FMath::Sin(fTheta)));
-		UE_LOG(LogTemp, Warning, TEXT("XSpeed : %f, YSpeed : %f"), (FMath::Cos(fTheta) * m_enemyData->GetSpeed()), (FMath::Sin(fTheta) * m_enemyData->GetSpeed()));*/
-
-		if (m_enemyData->GetSpeed() == 0)
-		{
-			/*UE_LOG(LogTemp, Warning, TEXT("Speed : %f"), m_enemyData->GetSpeed());
-			UE_LOG(LogTemp, Warning, TEXT("MaxHP : %f"), m_enemyData->GetMaxHP());*/
-		}
 	}
 
 	m_enemyComponent->SetComponentTransform();
 	SetCollisionBoxTransform();
-
+	SetHPBarTransform();
 }
 
 void AEnemyUnit::SetCollisionBoxTransform()
@@ -123,7 +145,13 @@ void AEnemyUnit::SetCollisionBoxTransform()
 	m_collisionBoxComponent->SetRelativeScale3D(FVector(1.f, 1.f, 1.f));
 	m_collisionBoxComponent->SetRelativeRotation(FRotator(0.f, 0.f, 0.f));
 	m_collisionBoxComponent->SetBoxExtent(FVector(m_boxWidth, m_boxHeight, 0.5f));
-	m_collisionBoxComponent->SetRelativeLocation(FVector(m_boxLocationX, 0.f, 80.f));
+	m_collisionBoxComponent->SetRelativeLocation(FVector(m_boxLocationX, 0.f, 66.f));
+}
+
+void AEnemyUnit::SetHPBarTransform()
+{
+	m_HPBarComponent->SetRelativeRotation(FRotator(90.0f, 0.0f, -180.0f));
+	m_HPBarComponent->SetRelativeLocation(FVector(-40.0f, 0.0f, 66.0f));
 }
 
 void AEnemyUnit::CheckDestination()
@@ -179,7 +207,7 @@ bool AEnemyUnit::CheckCollision()
 	for (auto overlappingComponent : pOverlappingComponents)
 	{
 		ATowerBlock* pTowerBlock = Cast<ATowerBlock>(overlappingComponent->GetOwner());
-		if (pTowerBlock && pTowerBlock->CanBlock())
+		if (overlappingComponent->GetName() == TEXT("CollisionCapsuleComponent") && pTowerBlock && pTowerBlock->CanBlock())
 		{
 			m_targetUnit = pTowerBlock;
 			m_targetUnit->AddBlockUnit();
@@ -190,6 +218,16 @@ bool AEnemyUnit::CheckCollision()
 	}
 	
 	return false;
+}
+
+void AEnemyUnit::EnemyDamaged(float Damage)
+{
+	m_HPBarComponent->SetVisibility(true);
+
+	m_curHP -= Damage;
+	m_enemyComponent->UnitDamageColor();
+
+	if (m_curHP <= 0) UnitDie();
 }
 
 void AEnemyUnit::UnitAttack()
@@ -208,6 +246,8 @@ void AEnemyUnit::UnitDie()
 	m_enemyComponent->BlackIn(true);
 	m_collisionBoxComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	m_holding = true;
+
+	m_HPBarComponent->SetVisibility(false);
 
 	UWorld* pWorld = GetWorld();
 	if (pWorld)
@@ -231,5 +271,15 @@ void AEnemyUnit::UnitDie()
 
 void AEnemyUnit::UnitDestroy()
 {
+	UWorld* pWorld = GetWorld();
+	if (pWorld)
+	{
+		AOperationGameMode* GameMode = Cast<AOperationGameMode>(UGameplayStatics::GetGameMode(pWorld));
+		if (GameMode)
+		{
+			GameMode->CheckOperationComplete();
+		}
+	}
+
 	Destroy();
 }

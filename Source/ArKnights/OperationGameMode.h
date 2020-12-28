@@ -31,7 +31,7 @@ private:
 
 	// SubWidgets
 	UPROPERTY()
-	class UUserWidget* m_missionSuccessWidget;
+	class UUserWidget* m_missionCompleteWidget;
 
 	UPROPERTY()
 	class UUserWidget* m_missionFailedWidget;
@@ -97,6 +97,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void AddRemoveEnemyCount();
+
+	UFUNCTION(BlueprintCallable)
+	void CheckOperationComplete();
 
 	UFUNCTION(BlueprintCallable)
 	void CheckEnemySpawn();

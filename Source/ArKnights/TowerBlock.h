@@ -34,10 +34,10 @@ protected:
 	UOperator* m_operatorData;
 
 	UPROPERTY()
-	class UMaterialInterface* m_materialInstance;
+	TMap<class URangeDecalComponent*, FVector2D> m_attackRange;
 
 	UPROPERTY()
-	TMap<class UDecalComponent*, FVector2D> m_attackRange;
+	class AEnemyUnit* m_targetUnit;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UWidgetComponent* m_HPBarComponent;
@@ -85,6 +85,8 @@ public:
 	void AddBlockUnit();
 
 	void RemoveBlockUnit();
+
+	void CheckRangeInEnemy();
 
 	UFUNCTION(BlueprintCallable)
 	void UnitAttack();

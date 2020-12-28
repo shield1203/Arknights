@@ -75,6 +75,18 @@ int32 UUserDataManager::GetUserLevel() const
 	return m_userData.level;
 }
 
+float UUserDataManager::GetCurExp()
+{
+	return m_userData.cur_exp;
+}
+
+float UUserDataManager::GetMaxExp()
+{
+	SetExpData(m_userData.level);
+
+	return m_expData.MaxExp;
+}
+
 float UUserDataManager::GetExpPercent()
 {
 	SetExpData(m_userData.level);

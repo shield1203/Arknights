@@ -211,6 +211,9 @@ public:
 	int32 GetCost() const;
 
 	UFUNCTION(BlueprintCallable)
+	float GetAtk() const;
+
+	UFUNCTION(BlueprintCallable)
 	TArray<FOperatorRange> GetAttackRange() const;
 
 	UFUNCTION(BlueprintCallable)

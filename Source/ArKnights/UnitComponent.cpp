@@ -26,6 +26,15 @@ UUnitComponent::UUnitComponent()
 	m_delegateChangeColorValue.BindDynamic(this, &UUnitComponent::ChangeColorValue);
 }
 
+void UUnitComponent::SetInitColor()
+{
+	m_color.R = 1.f;
+	m_color.G = 1.f;
+	m_color.B = 1.f;
+	m_color.A = 1.f;
+	SetSpriteColor(m_color);
+}
+
 void UUnitComponent::FadeIn(bool upAlphaValue)
 {
 	m_upAlphaValue = upAlphaValue;

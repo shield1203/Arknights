@@ -85,6 +85,12 @@ public:
 	int32 GetUserLevel() const;
 
 	UFUNCTION(BlueprintCallable, Category = "UserDataManager")
+	float GetCurExp();
+
+	UFUNCTION(BlueprintCallable, Category = "UserDataManager")
+	float GetMaxExp();
+
+	UFUNCTION(BlueprintCallable, Category = "UserDataManager")
 	float GetExpPercent();
 
 	UFUNCTION(BlueprintCallable, Category = "UserDataManager")

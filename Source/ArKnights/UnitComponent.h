@@ -103,6 +103,8 @@ public:
 
 	virtual void CheckFrameEvent() {};
 
+	void SetInitColor();
+
 	void FadeIn(bool upAlphaValue);
 
 	UFUNCTION()

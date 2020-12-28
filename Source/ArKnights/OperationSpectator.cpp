@@ -1,6 +1,8 @@
 #include "OperationSpectator.h"
 #include "PlacementUnitActor.h"
 #include "TowerBlock.h"
+#include "OperationGameMode.h"
+#include "Kismet/GameplayStatics.h"
 
 AOperationSpectator::AOperationSpectator()
 {
@@ -86,6 +88,16 @@ void AOperationSpectator::FinishPrepareUnitSetUp(ATowerBlock* towerBlock)
 		towerBlock->StartPlacement(m_placementUnitActor->GetOperatorData());
 		m_placementOperators.Add(m_selectedOperatorCode);
 		m_selectedOperatorButton = false;
+
+		UWorld* pWorld = GetWorld();
+		if (pWorld)
+		{
+			AOperationGameMode* GameMode = Cast<AOperationGameMode>(UGameplayStatics::GetGameMode(pWorld));
+			if (GameMode)
+			{
+				GameMode->AddCost(-m_placementUnitActor->GetOperatorData()->GetCost());
+			}
+		}
 	}
 
 	if (m_placementUnitActor)
